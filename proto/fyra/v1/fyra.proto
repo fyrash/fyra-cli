@@ -1,0 +1,193 @@
+syntax = "proto3";
+
+package fyra.v1;
+
+option go_package = "github.com/fyrash/fyra-cli/proto/gen";
+
+service DeployService {
+  rpc Register(RegisterRequest)        returns (RegisterResponse);
+  rpc ConfirmEmail(ConfirmEmailRequest)     returns (ConfirmEmailResponse);
+  rpc ResendConfirmation(ResendConfirmationRequest) returns (ResendConfirmationResponse);
+  rpc RequestPasswordReset(RequestPasswordResetRequest) returns (RequestPasswordResetResponse);
+  rpc ConfirmPasswordReset(ConfirmPasswordResetRequest) returns (ConfirmPasswordResetResponse);
+  rpc Login(LoginRequest)              returns (LoginResponse);
+  rpc Logout(LogoutRequest)            returns (LogoutResponse);
+  rpc WhoAmI(WhoAmIRequest)            returns (WhoAmIResponse);
+  rpc CreateApp(CreateAppRequest)      returns (CreateAppResponse);
+  rpc ListApps(ListAppsRequest)        returns (ListAppsResponse);
+  rpc Push(stream PushRequest)                    returns (PushResponse);
+  rpc SetCustomDomain(SetCustomDomainRequest)     returns (SetCustomDomainResponse);
+  rpc GetCertStatus(GetCertStatusRequest)        returns (GetCertStatusResponse);
+  rpc GetFreeDomains(GetFreeDomainsRequest)  returns (GetFreeDomainsResponse);
+  rpc DeleteApp(DeleteAppRequest)             returns (DeleteAppResponse);
+
+  rpc AddonsCreate(AddonsCreateRequest)   returns (AddonsCreateResponse);
+  rpc AddonsDestroy(AddonsDestroyRequest) returns (AddonsDestroyResponse);
+  rpc AddonsList(AddonsListRequest)       returns (AddonsListResponse);
+  rpc GetRequestLogs(GetRequestLogsRequest) returns (GetRequestLogsResponse);
+}
+
+message RegisterRequest  { string email = 1; string password = 2; }
+message RegisterResponse { string user_id = 1; }
+
+message ConfirmEmailRequest  { string code = 1; }
+message ConfirmEmailResponse {}
+
+message ResendConfirmationRequest  {}
+message ResendConfirmationResponse {}
+
+message RequestPasswordResetRequest  { string email = 1; }
+message RequestPasswordResetResponse {}
+
+message ConfirmPasswordResetRequest  { string code = 1; string new_password = 2; string email = 3; }
+message ConfirmPasswordResetResponse {}
+
+message LoginRequest  { string email = 1; string password = 2; }
+message LoginResponse { string token = 1; }
+
+message LogoutRequest  {}
+message LogoutResponse {}
+
+message WhoAmIRequest  {}
+message WhoAmIResponse {
+  string email       = 1;
+  bool   confirmed   = 2;
+}
+
+message CreateAppRequest {
+  string slug_name     = 1; // empty = auto-generate
+  string domain        = 2; // free domain zone (e.g. "apps.fyra.sh"), empty = server default
+  string custom_domain = 3; // if set, creates a custom domain app
+}
+message CreateAppResponse {
+  string slug_name     = 1;
+  string created_at    = 2; // RFC3339
+  string domain        = 3; // the domain zone used
+  string custom_domain = 4; // the custom domain if set
+}
+
+message ListAppsRequest {}
+message ListAppsResponse { repeated AppInfo apps = 1; }
+message AppInfo {
+  string slug_name     = 1;
+  string url           = 2; // empty if never deployed
+  string created_at    = 3; // RFC3339
+  string custom_domain = 4; // empty if not set
+  string domain        = 5; // domain zone (e.g. "apps.fyra.sh")
+}
+
+// First message: slug_name + domain + first chunk. Subsequent messages: chunk only.
+message PushRequest {
+  string slug_name = 1;
+  bytes  chunk     = 2;
+  string domain    = 3; // domain zone for composite lookup
+}
+message PushResponse {
+  string url          = 1;
+  bool first_deploy   = 2;
+}
+
+message SetCustomDomainRequest {
+  string slug_name  = 1;
+  string domain     = 2; // custom domain to set (empty = remove)
+  string app_domain = 3; // domain zone for composite lookup
+}
+message SetCustomDomainResponse {
+  string server_ip = 1; // public IP of the deployment server; point DNS here
+}
+
+message GetCertStatusRequest {
+  string slug_name  = 1;
+  string domain     = 2; // custom domain (for cert status check)
+  string app_domain = 3; // domain zone for composite lookup
+}
+
+message GetCertStatusResponse {
+  enum Status {
+    CERT_STATUS_PENDING   = 0; // pending, provisioning, or validated — still in progress
+    CERT_STATUS_COMPLETED = 1; // cert issued and active
+    CERT_STATUS_FAILED    = 2; // provisioning failed
+  }
+  Status status          = 1;
+  string status_message  = 2; // human-readable detail (e.g. the raw TLH status string)
+  string error_detail    = 3; // populated when status=FAILED
+}
+
+message GetFreeDomainsRequest {}
+
+message GetFreeDomainsResponse {
+  repeated string domains = 1;
+}
+
+message DeleteAppRequest {
+  string slug_name = 1;
+  string domain    = 2; // domain zone for composite lookup
+}
+message DeleteAppResponse {
+  string slug_name = 1; // confirm what was deleted
+}
+
+// ── Addon RPCs ────────────────────────────────────────────────────────────────
+
+message AddonsCreateRequest {
+  string addon_id = 1; // e.g. "counter"
+  string plan     = 2; // e.g. "free"; empty = first available plan
+  string app_slug = 3;
+  string domain   = 4; // domain zone for composite app lookup
+}
+
+message AddonsCreateResponse {
+  string resource_id         = 1;
+  string provider_id         = 2;
+  string message             = 3;
+  map<string, string> config = 4;
+}
+
+message AddonsDestroyRequest {
+  string addon_id = 1;
+  string app_slug = 2;
+  string domain   = 3;
+}
+
+message AddonsDestroyResponse {}
+
+message AddonsListRequest {
+  string app_slug = 1;
+  string domain   = 2;
+  string addon_id = 3; // optional: filter to a single addon (used by addons:info)
+}
+
+message AddonsListResponse {
+  message AddonResource {
+    string addon_id            = 1;
+    string provider_id         = 2;
+    string plan                = 3;
+    string status              = 4;
+    map<string, string> config = 5;
+    string created_at          = 6;
+    string updated_at          = 7;
+    string message             = 8;
+  }
+  repeated AddonResource addons = 1;
+}
+
+// ── Request Logs RPC ─────────────────────────────────────────────────────────────
+
+message GetRequestLogsRequest {
+  string slug_name = 1;
+  string domain    = 2; // domain zone for composite lookup (e.g. "apps.fyra.sh")
+  string since     = 3; // RFC3339 timestamp, optional (default: 5 minutes ago)
+  string until     = 4; // RFC3339 timestamp, optional (default: now)
+  int32  limit     = 5; // max entries to return (default 200, max 1000)
+}
+
+message RequestLogEntry {
+  string ts       = 1; // RFC3339
+  string node_id  = 2;
+  string payload  = 3; // raw JSON string from TLH
+}
+
+message GetRequestLogsResponse {
+  repeated RequestLogEntry entries             = 1;
+  string                   retention_cutoff_ts = 2;
+}
