@@ -1,6 +1,6 @@
-# fyra
+# 🔥 fyra
 
-`fyra` is a command-line tool for deploying static sites and single-page applications.
+`fyra` is a command-line tool for deploying static sites and single-page applications onto [fyra.sh](https://fyra.sh)
 
 Push a directory, get a live URL behind a CDN, no Dockerfiles, no build packs, no config files.
 
@@ -20,7 +20,7 @@ curl -fsSL https://fyra.sh/install.sh | sh
 
 ## Documentation
 
-To find out more on how to use the cli, check out our <a href="https://fyra.sh/help.html">adocumentation</a>.
+To find out more on how to use the cli, check out our <a href="https://fyra.sh/help.html">documentation</a>.
 
 ## Building
 
