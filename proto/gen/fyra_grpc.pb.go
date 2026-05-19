@@ -24,6 +24,7 @@ const (
 	DeployService_ResendConfirmation_FullMethodName   = "/fyra.v1.DeployService/ResendConfirmation"
 	DeployService_RequestPasswordReset_FullMethodName = "/fyra.v1.DeployService/RequestPasswordReset"
 	DeployService_ConfirmPasswordReset_FullMethodName = "/fyra.v1.DeployService/ConfirmPasswordReset"
+	DeployService_ValidateResetCode_FullMethodName    = "/fyra.v1.DeployService/ValidateResetCode"
 	DeployService_Login_FullMethodName                = "/fyra.v1.DeployService/Login"
 	DeployService_Logout_FullMethodName               = "/fyra.v1.DeployService/Logout"
 	DeployService_WhoAmI_FullMethodName               = "/fyra.v1.DeployService/WhoAmI"
@@ -49,6 +50,7 @@ type DeployServiceClient interface {
 	ResendConfirmation(ctx context.Context, in *ResendConfirmationRequest, opts ...grpc.CallOption) (*ResendConfirmationResponse, error)
 	RequestPasswordReset(ctx context.Context, in *RequestPasswordResetRequest, opts ...grpc.CallOption) (*RequestPasswordResetResponse, error)
 	ConfirmPasswordReset(ctx context.Context, in *ConfirmPasswordResetRequest, opts ...grpc.CallOption) (*ConfirmPasswordResetResponse, error)
+	ValidateResetCode(ctx context.Context, in *ValidateResetCodeRequest, opts ...grpc.CallOption) (*ValidateResetCodeResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
 	WhoAmI(ctx context.Context, in *WhoAmIRequest, opts ...grpc.CallOption) (*WhoAmIResponse, error)
@@ -117,6 +119,16 @@ func (c *deployServiceClient) ConfirmPasswordReset(ctx context.Context, in *Conf
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ConfirmPasswordResetResponse)
 	err := c.cc.Invoke(ctx, DeployService_ConfirmPasswordReset_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *deployServiceClient) ValidateResetCode(ctx context.Context, in *ValidateResetCodeRequest, opts ...grpc.CallOption) (*ValidateResetCodeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ValidateResetCodeResponse)
+	err := c.cc.Invoke(ctx, DeployService_ValidateResetCode_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -275,6 +287,7 @@ type DeployServiceServer interface {
 	ResendConfirmation(context.Context, *ResendConfirmationRequest) (*ResendConfirmationResponse, error)
 	RequestPasswordReset(context.Context, *RequestPasswordResetRequest) (*RequestPasswordResetResponse, error)
 	ConfirmPasswordReset(context.Context, *ConfirmPasswordResetRequest) (*ConfirmPasswordResetResponse, error)
+	ValidateResetCode(context.Context, *ValidateResetCodeRequest) (*ValidateResetCodeResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 	WhoAmI(context.Context, *WhoAmIRequest) (*WhoAmIResponse, error)
@@ -313,6 +326,9 @@ func (UnimplementedDeployServiceServer) RequestPasswordReset(context.Context, *R
 }
 func (UnimplementedDeployServiceServer) ConfirmPasswordReset(context.Context, *ConfirmPasswordResetRequest) (*ConfirmPasswordResetResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ConfirmPasswordReset not implemented")
+}
+func (UnimplementedDeployServiceServer) ValidateResetCode(context.Context, *ValidateResetCodeRequest) (*ValidateResetCodeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ValidateResetCode not implemented")
 }
 func (UnimplementedDeployServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
@@ -463,6 +479,24 @@ func _DeployService_ConfirmPasswordReset_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DeployServiceServer).ConfirmPasswordReset(ctx, req.(*ConfirmPasswordResetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DeployService_ValidateResetCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateResetCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeployServiceServer).ValidateResetCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DeployService_ValidateResetCode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeployServiceServer).ValidateResetCode(ctx, req.(*ValidateResetCodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -734,6 +768,10 @@ var DeployService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConfirmPasswordReset",
 			Handler:    _DeployService_ConfirmPasswordReset_Handler,
+		},
+		{
+			MethodName: "ValidateResetCode",
+			Handler:    _DeployService_ValidateResetCode_Handler,
 		},
 		{
 			MethodName: "Login",

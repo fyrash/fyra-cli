@@ -67,7 +67,7 @@ func (x GetCertStatusResponse_Status) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use GetCertStatusResponse_Status.Descriptor instead.
 func (GetCertStatusResponse_Status) EnumDescriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{26, 0}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{28, 0}
 }
 
 type RegisterRequest struct {
@@ -494,6 +494,94 @@ func (*ConfirmPasswordResetResponse) Descriptor() ([]byte, []int) {
 	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{9}
 }
 
+type ValidateResetCodeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          string                 `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ValidateResetCodeRequest) Reset() {
+	*x = ValidateResetCodeRequest{}
+	mi := &file_fyra_v1_fyra_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ValidateResetCodeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ValidateResetCodeRequest) ProtoMessage() {}
+
+func (x *ValidateResetCodeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_fyra_v1_fyra_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ValidateResetCodeRequest.ProtoReflect.Descriptor instead.
+func (*ValidateResetCodeRequest) Descriptor() ([]byte, []int) {
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ValidateResetCodeRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *ValidateResetCodeRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+type ValidateResetCodeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ValidateResetCodeResponse) Reset() {
+	*x = ValidateResetCodeResponse{}
+	mi := &file_fyra_v1_fyra_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ValidateResetCodeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ValidateResetCodeResponse) ProtoMessage() {}
+
+func (x *ValidateResetCodeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_fyra_v1_fyra_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ValidateResetCodeResponse.ProtoReflect.Descriptor instead.
+func (*ValidateResetCodeResponse) Descriptor() ([]byte, []int) {
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{11}
+}
+
 type LoginRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
@@ -504,7 +592,7 @@ type LoginRequest struct {
 
 func (x *LoginRequest) Reset() {
 	*x = LoginRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[10]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -516,7 +604,7 @@ func (x *LoginRequest) String() string {
 func (*LoginRequest) ProtoMessage() {}
 
 func (x *LoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[10]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -529,7 +617,7 @@ func (x *LoginRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginRequest.ProtoReflect.Descriptor instead.
 func (*LoginRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{10}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *LoginRequest) GetEmail() string {
@@ -555,7 +643,7 @@ type LoginResponse struct {
 
 func (x *LoginResponse) Reset() {
 	*x = LoginResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[11]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -567,7 +655,7 @@ func (x *LoginResponse) String() string {
 func (*LoginResponse) ProtoMessage() {}
 
 func (x *LoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[11]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -580,7 +668,7 @@ func (x *LoginResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginResponse.ProtoReflect.Descriptor instead.
 func (*LoginResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{11}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *LoginResponse) GetToken() string {
@@ -598,7 +686,7 @@ type LogoutRequest struct {
 
 func (x *LogoutRequest) Reset() {
 	*x = LogoutRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[12]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -610,7 +698,7 @@ func (x *LogoutRequest) String() string {
 func (*LogoutRequest) ProtoMessage() {}
 
 func (x *LogoutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[12]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -623,7 +711,7 @@ func (x *LogoutRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogoutRequest.ProtoReflect.Descriptor instead.
 func (*LogoutRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{12}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{14}
 }
 
 type LogoutResponse struct {
@@ -634,7 +722,7 @@ type LogoutResponse struct {
 
 func (x *LogoutResponse) Reset() {
 	*x = LogoutResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[13]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -646,7 +734,7 @@ func (x *LogoutResponse) String() string {
 func (*LogoutResponse) ProtoMessage() {}
 
 func (x *LogoutResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[13]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -659,7 +747,7 @@ func (x *LogoutResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogoutResponse.ProtoReflect.Descriptor instead.
 func (*LogoutResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{13}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{15}
 }
 
 type WhoAmIRequest struct {
@@ -670,7 +758,7 @@ type WhoAmIRequest struct {
 
 func (x *WhoAmIRequest) Reset() {
 	*x = WhoAmIRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[14]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -682,7 +770,7 @@ func (x *WhoAmIRequest) String() string {
 func (*WhoAmIRequest) ProtoMessage() {}
 
 func (x *WhoAmIRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[14]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -695,7 +783,7 @@ func (x *WhoAmIRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WhoAmIRequest.ProtoReflect.Descriptor instead.
 func (*WhoAmIRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{14}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{16}
 }
 
 type WhoAmIResponse struct {
@@ -708,7 +796,7 @@ type WhoAmIResponse struct {
 
 func (x *WhoAmIResponse) Reset() {
 	*x = WhoAmIResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[15]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -720,7 +808,7 @@ func (x *WhoAmIResponse) String() string {
 func (*WhoAmIResponse) ProtoMessage() {}
 
 func (x *WhoAmIResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[15]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -733,7 +821,7 @@ func (x *WhoAmIResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WhoAmIResponse.ProtoReflect.Descriptor instead.
 func (*WhoAmIResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{15}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *WhoAmIResponse) GetEmail() string {
@@ -761,7 +849,7 @@ type CreateAppRequest struct {
 
 func (x *CreateAppRequest) Reset() {
 	*x = CreateAppRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[16]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -773,7 +861,7 @@ func (x *CreateAppRequest) String() string {
 func (*CreateAppRequest) ProtoMessage() {}
 
 func (x *CreateAppRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[16]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -786,7 +874,7 @@ func (x *CreateAppRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateAppRequest.ProtoReflect.Descriptor instead.
 func (*CreateAppRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{16}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *CreateAppRequest) GetSlugName() string {
@@ -822,7 +910,7 @@ type CreateAppResponse struct {
 
 func (x *CreateAppResponse) Reset() {
 	*x = CreateAppResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[17]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -834,7 +922,7 @@ func (x *CreateAppResponse) String() string {
 func (*CreateAppResponse) ProtoMessage() {}
 
 func (x *CreateAppResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[17]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -847,7 +935,7 @@ func (x *CreateAppResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateAppResponse.ProtoReflect.Descriptor instead.
 func (*CreateAppResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{17}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *CreateAppResponse) GetSlugName() string {
@@ -886,7 +974,7 @@ type ListAppsRequest struct {
 
 func (x *ListAppsRequest) Reset() {
 	*x = ListAppsRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[18]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -898,7 +986,7 @@ func (x *ListAppsRequest) String() string {
 func (*ListAppsRequest) ProtoMessage() {}
 
 func (x *ListAppsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[18]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -911,7 +999,7 @@ func (x *ListAppsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAppsRequest.ProtoReflect.Descriptor instead.
 func (*ListAppsRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{18}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{20}
 }
 
 type ListAppsResponse struct {
@@ -923,7 +1011,7 @@ type ListAppsResponse struct {
 
 func (x *ListAppsResponse) Reset() {
 	*x = ListAppsResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[19]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -935,7 +1023,7 @@ func (x *ListAppsResponse) String() string {
 func (*ListAppsResponse) ProtoMessage() {}
 
 func (x *ListAppsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[19]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -948,7 +1036,7 @@ func (x *ListAppsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAppsResponse.ProtoReflect.Descriptor instead.
 func (*ListAppsResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{19}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ListAppsResponse) GetApps() []*AppInfo {
@@ -971,7 +1059,7 @@ type AppInfo struct {
 
 func (x *AppInfo) Reset() {
 	*x = AppInfo{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[20]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -983,7 +1071,7 @@ func (x *AppInfo) String() string {
 func (*AppInfo) ProtoMessage() {}
 
 func (x *AppInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[20]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -996,7 +1084,7 @@ func (x *AppInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppInfo.ProtoReflect.Descriptor instead.
 func (*AppInfo) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{20}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *AppInfo) GetSlugName() string {
@@ -1046,7 +1134,7 @@ type PushRequest struct {
 
 func (x *PushRequest) Reset() {
 	*x = PushRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[21]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1058,7 +1146,7 @@ func (x *PushRequest) String() string {
 func (*PushRequest) ProtoMessage() {}
 
 func (x *PushRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[21]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1071,7 +1159,7 @@ func (x *PushRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PushRequest.ProtoReflect.Descriptor instead.
 func (*PushRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{21}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *PushRequest) GetSlugName() string {
@@ -1105,7 +1193,7 @@ type PushResponse struct {
 
 func (x *PushResponse) Reset() {
 	*x = PushResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[22]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1117,7 +1205,7 @@ func (x *PushResponse) String() string {
 func (*PushResponse) ProtoMessage() {}
 
 func (x *PushResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[22]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1130,7 +1218,7 @@ func (x *PushResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PushResponse.ProtoReflect.Descriptor instead.
 func (*PushResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{22}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *PushResponse) GetUrl() string {
@@ -1158,7 +1246,7 @@ type SetCustomDomainRequest struct {
 
 func (x *SetCustomDomainRequest) Reset() {
 	*x = SetCustomDomainRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[23]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1170,7 +1258,7 @@ func (x *SetCustomDomainRequest) String() string {
 func (*SetCustomDomainRequest) ProtoMessage() {}
 
 func (x *SetCustomDomainRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[23]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1183,7 +1271,7 @@ func (x *SetCustomDomainRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetCustomDomainRequest.ProtoReflect.Descriptor instead.
 func (*SetCustomDomainRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{23}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *SetCustomDomainRequest) GetSlugName() string {
@@ -1216,7 +1304,7 @@ type SetCustomDomainResponse struct {
 
 func (x *SetCustomDomainResponse) Reset() {
 	*x = SetCustomDomainResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[24]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1228,7 +1316,7 @@ func (x *SetCustomDomainResponse) String() string {
 func (*SetCustomDomainResponse) ProtoMessage() {}
 
 func (x *SetCustomDomainResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[24]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1241,7 +1329,7 @@ func (x *SetCustomDomainResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetCustomDomainResponse.ProtoReflect.Descriptor instead.
 func (*SetCustomDomainResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{24}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *SetCustomDomainResponse) GetServerIp() string {
@@ -1262,7 +1350,7 @@ type GetCertStatusRequest struct {
 
 func (x *GetCertStatusRequest) Reset() {
 	*x = GetCertStatusRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[25]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1274,7 +1362,7 @@ func (x *GetCertStatusRequest) String() string {
 func (*GetCertStatusRequest) ProtoMessage() {}
 
 func (x *GetCertStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[25]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1287,7 +1375,7 @@ func (x *GetCertStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCertStatusRequest.ProtoReflect.Descriptor instead.
 func (*GetCertStatusRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{25}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *GetCertStatusRequest) GetSlugName() string {
@@ -1322,7 +1410,7 @@ type GetCertStatusResponse struct {
 
 func (x *GetCertStatusResponse) Reset() {
 	*x = GetCertStatusResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[26]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1334,7 +1422,7 @@ func (x *GetCertStatusResponse) String() string {
 func (*GetCertStatusResponse) ProtoMessage() {}
 
 func (x *GetCertStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[26]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1347,7 +1435,7 @@ func (x *GetCertStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCertStatusResponse.ProtoReflect.Descriptor instead.
 func (*GetCertStatusResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{26}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *GetCertStatusResponse) GetStatus() GetCertStatusResponse_Status {
@@ -1379,7 +1467,7 @@ type GetFreeDomainsRequest struct {
 
 func (x *GetFreeDomainsRequest) Reset() {
 	*x = GetFreeDomainsRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[27]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1391,7 +1479,7 @@ func (x *GetFreeDomainsRequest) String() string {
 func (*GetFreeDomainsRequest) ProtoMessage() {}
 
 func (x *GetFreeDomainsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[27]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1404,7 +1492,7 @@ func (x *GetFreeDomainsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetFreeDomainsRequest.ProtoReflect.Descriptor instead.
 func (*GetFreeDomainsRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{27}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{29}
 }
 
 type GetFreeDomainsResponse struct {
@@ -1416,7 +1504,7 @@ type GetFreeDomainsResponse struct {
 
 func (x *GetFreeDomainsResponse) Reset() {
 	*x = GetFreeDomainsResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[28]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1428,7 +1516,7 @@ func (x *GetFreeDomainsResponse) String() string {
 func (*GetFreeDomainsResponse) ProtoMessage() {}
 
 func (x *GetFreeDomainsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[28]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1441,7 +1529,7 @@ func (x *GetFreeDomainsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetFreeDomainsResponse.ProtoReflect.Descriptor instead.
 func (*GetFreeDomainsResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{28}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *GetFreeDomainsResponse) GetDomains() []string {
@@ -1461,7 +1549,7 @@ type DeleteAppRequest struct {
 
 func (x *DeleteAppRequest) Reset() {
 	*x = DeleteAppRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[29]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1473,7 +1561,7 @@ func (x *DeleteAppRequest) String() string {
 func (*DeleteAppRequest) ProtoMessage() {}
 
 func (x *DeleteAppRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[29]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1486,7 +1574,7 @@ func (x *DeleteAppRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAppRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAppRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{29}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *DeleteAppRequest) GetSlugName() string {
@@ -1512,7 +1600,7 @@ type DeleteAppResponse struct {
 
 func (x *DeleteAppResponse) Reset() {
 	*x = DeleteAppResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[30]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1524,7 +1612,7 @@ func (x *DeleteAppResponse) String() string {
 func (*DeleteAppResponse) ProtoMessage() {}
 
 func (x *DeleteAppResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[30]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1537,7 +1625,7 @@ func (x *DeleteAppResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAppResponse.ProtoReflect.Descriptor instead.
 func (*DeleteAppResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{30}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *DeleteAppResponse) GetSlugName() string {
@@ -1559,7 +1647,7 @@ type AddonsCreateRequest struct {
 
 func (x *AddonsCreateRequest) Reset() {
 	*x = AddonsCreateRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[31]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1571,7 +1659,7 @@ func (x *AddonsCreateRequest) String() string {
 func (*AddonsCreateRequest) ProtoMessage() {}
 
 func (x *AddonsCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[31]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1584,7 +1672,7 @@ func (x *AddonsCreateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddonsCreateRequest.ProtoReflect.Descriptor instead.
 func (*AddonsCreateRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{31}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *AddonsCreateRequest) GetAddonId() string {
@@ -1627,7 +1715,7 @@ type AddonsCreateResponse struct {
 
 func (x *AddonsCreateResponse) Reset() {
 	*x = AddonsCreateResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[32]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1639,7 +1727,7 @@ func (x *AddonsCreateResponse) String() string {
 func (*AddonsCreateResponse) ProtoMessage() {}
 
 func (x *AddonsCreateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[32]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1652,7 +1740,7 @@ func (x *AddonsCreateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddonsCreateResponse.ProtoReflect.Descriptor instead.
 func (*AddonsCreateResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{32}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *AddonsCreateResponse) GetResourceId() string {
@@ -1694,7 +1782,7 @@ type AddonsDestroyRequest struct {
 
 func (x *AddonsDestroyRequest) Reset() {
 	*x = AddonsDestroyRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[33]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1706,7 +1794,7 @@ func (x *AddonsDestroyRequest) String() string {
 func (*AddonsDestroyRequest) ProtoMessage() {}
 
 func (x *AddonsDestroyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[33]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1719,7 +1807,7 @@ func (x *AddonsDestroyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddonsDestroyRequest.ProtoReflect.Descriptor instead.
 func (*AddonsDestroyRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{33}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *AddonsDestroyRequest) GetAddonId() string {
@@ -1751,7 +1839,7 @@ type AddonsDestroyResponse struct {
 
 func (x *AddonsDestroyResponse) Reset() {
 	*x = AddonsDestroyResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[34]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1763,7 +1851,7 @@ func (x *AddonsDestroyResponse) String() string {
 func (*AddonsDestroyResponse) ProtoMessage() {}
 
 func (x *AddonsDestroyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[34]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1776,7 +1864,7 @@ func (x *AddonsDestroyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddonsDestroyResponse.ProtoReflect.Descriptor instead.
 func (*AddonsDestroyResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{34}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{36}
 }
 
 type AddonsListRequest struct {
@@ -1790,7 +1878,7 @@ type AddonsListRequest struct {
 
 func (x *AddonsListRequest) Reset() {
 	*x = AddonsListRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[35]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1802,7 +1890,7 @@ func (x *AddonsListRequest) String() string {
 func (*AddonsListRequest) ProtoMessage() {}
 
 func (x *AddonsListRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[35]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1815,7 +1903,7 @@ func (x *AddonsListRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddonsListRequest.ProtoReflect.Descriptor instead.
 func (*AddonsListRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{35}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *AddonsListRequest) GetAppSlug() string {
@@ -1848,7 +1936,7 @@ type AddonsListResponse struct {
 
 func (x *AddonsListResponse) Reset() {
 	*x = AddonsListResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[36]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1860,7 +1948,7 @@ func (x *AddonsListResponse) String() string {
 func (*AddonsListResponse) ProtoMessage() {}
 
 func (x *AddonsListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[36]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1873,7 +1961,7 @@ func (x *AddonsListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddonsListResponse.ProtoReflect.Descriptor instead.
 func (*AddonsListResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{36}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *AddonsListResponse) GetAddons() []*AddonsListResponse_AddonResource {
@@ -1896,7 +1984,7 @@ type GetRequestLogsRequest struct {
 
 func (x *GetRequestLogsRequest) Reset() {
 	*x = GetRequestLogsRequest{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[37]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1908,7 +1996,7 @@ func (x *GetRequestLogsRequest) String() string {
 func (*GetRequestLogsRequest) ProtoMessage() {}
 
 func (x *GetRequestLogsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[37]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1921,7 +2009,7 @@ func (x *GetRequestLogsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRequestLogsRequest.ProtoReflect.Descriptor instead.
 func (*GetRequestLogsRequest) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{37}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *GetRequestLogsRequest) GetSlugName() string {
@@ -1970,7 +2058,7 @@ type RequestLogEntry struct {
 
 func (x *RequestLogEntry) Reset() {
 	*x = RequestLogEntry{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[38]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1982,7 +2070,7 @@ func (x *RequestLogEntry) String() string {
 func (*RequestLogEntry) ProtoMessage() {}
 
 func (x *RequestLogEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[38]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1995,7 +2083,7 @@ func (x *RequestLogEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestLogEntry.ProtoReflect.Descriptor instead.
 func (*RequestLogEntry) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{38}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *RequestLogEntry) GetTs() string {
@@ -2029,7 +2117,7 @@ type GetRequestLogsResponse struct {
 
 func (x *GetRequestLogsResponse) Reset() {
 	*x = GetRequestLogsResponse{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[39]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2041,7 +2129,7 @@ func (x *GetRequestLogsResponse) String() string {
 func (*GetRequestLogsResponse) ProtoMessage() {}
 
 func (x *GetRequestLogsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[39]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2054,7 +2142,7 @@ func (x *GetRequestLogsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRequestLogsResponse.ProtoReflect.Descriptor instead.
 func (*GetRequestLogsResponse) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{39}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetRequestLogsResponse) GetEntries() []*RequestLogEntry {
@@ -2087,7 +2175,7 @@ type AddonsListResponse_AddonResource struct {
 
 func (x *AddonsListResponse_AddonResource) Reset() {
 	*x = AddonsListResponse_AddonResource{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[41]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2099,7 +2187,7 @@ func (x *AddonsListResponse_AddonResource) String() string {
 func (*AddonsListResponse_AddonResource) ProtoMessage() {}
 
 func (x *AddonsListResponse_AddonResource) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[41]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2112,7 +2200,7 @@ func (x *AddonsListResponse_AddonResource) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddonsListResponse_AddonResource.ProtoReflect.Descriptor instead.
 func (*AddonsListResponse_AddonResource) Descriptor() ([]byte, []int) {
-	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{36, 0}
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{38, 0}
 }
 
 func (x *AddonsListResponse_AddonResource) GetAddonId() string {
@@ -2193,7 +2281,11 @@ const file_fyra_v1_fyra_proto_rawDesc = "" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12!\n" +
 	"\fnew_password\x18\x02 \x01(\tR\vnewPassword\x12\x14\n" +
 	"\x05email\x18\x03 \x01(\tR\x05email\"\x1e\n" +
-	"\x1cConfirmPasswordResetResponse\"@\n" +
+	"\x1cConfirmPasswordResetResponse\"D\n" +
+	"\x18ValidateResetCodeRequest\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\tR\x04code\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\"\x1b\n" +
+	"\x19ValidateResetCodeResponse\"@\n" +
 	"\fLoginRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"%\n" +
@@ -2313,13 +2405,14 @@ const file_fyra_v1_fyra_proto_rawDesc = "" +
 	"\apayload\x18\x03 \x01(\tR\apayload\"|\n" +
 	"\x16GetRequestLogsResponse\x122\n" +
 	"\aentries\x18\x01 \x03(\v2\x18.fyra.v1.RequestLogEntryR\aentries\x12.\n" +
-	"\x13retention_cutoff_ts\x18\x02 \x01(\tR\x11retentionCutoffTs2\xa4\v\n" +
+	"\x13retention_cutoff_ts\x18\x02 \x01(\tR\x11retentionCutoffTs2\x80\f\n" +
 	"\rDeployService\x12?\n" +
 	"\bRegister\x12\x18.fyra.v1.RegisterRequest\x1a\x19.fyra.v1.RegisterResponse\x12K\n" +
 	"\fConfirmEmail\x12\x1c.fyra.v1.ConfirmEmailRequest\x1a\x1d.fyra.v1.ConfirmEmailResponse\x12]\n" +
 	"\x12ResendConfirmation\x12\".fyra.v1.ResendConfirmationRequest\x1a#.fyra.v1.ResendConfirmationResponse\x12c\n" +
 	"\x14RequestPasswordReset\x12$.fyra.v1.RequestPasswordResetRequest\x1a%.fyra.v1.RequestPasswordResetResponse\x12c\n" +
-	"\x14ConfirmPasswordReset\x12$.fyra.v1.ConfirmPasswordResetRequest\x1a%.fyra.v1.ConfirmPasswordResetResponse\x126\n" +
+	"\x14ConfirmPasswordReset\x12$.fyra.v1.ConfirmPasswordResetRequest\x1a%.fyra.v1.ConfirmPasswordResetResponse\x12Z\n" +
+	"\x11ValidateResetCode\x12!.fyra.v1.ValidateResetCodeRequest\x1a\".fyra.v1.ValidateResetCodeResponse\x126\n" +
 	"\x05Login\x12\x15.fyra.v1.LoginRequest\x1a\x16.fyra.v1.LoginResponse\x129\n" +
 	"\x06Logout\x12\x16.fyra.v1.LogoutRequest\x1a\x17.fyra.v1.LogoutResponse\x129\n" +
 	"\x06WhoAmI\x12\x16.fyra.v1.WhoAmIRequest\x1a\x17.fyra.v1.WhoAmIResponse\x12B\n" +
@@ -2349,7 +2442,7 @@ func file_fyra_v1_fyra_proto_rawDescGZIP() []byte {
 }
 
 var file_fyra_v1_fyra_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_fyra_v1_fyra_proto_msgTypes = make([]protoimpl.MessageInfo, 43)
+var file_fyra_v1_fyra_proto_msgTypes = make([]protoimpl.MessageInfo, 45)
 var file_fyra_v1_fyra_proto_goTypes = []any{
 	(GetCertStatusResponse_Status)(0),        // 0: fyra.v1.GetCertStatusResponse.Status
 	(*RegisterRequest)(nil),                  // 1: fyra.v1.RegisterRequest
@@ -2362,87 +2455,91 @@ var file_fyra_v1_fyra_proto_goTypes = []any{
 	(*RequestPasswordResetResponse)(nil),     // 8: fyra.v1.RequestPasswordResetResponse
 	(*ConfirmPasswordResetRequest)(nil),      // 9: fyra.v1.ConfirmPasswordResetRequest
 	(*ConfirmPasswordResetResponse)(nil),     // 10: fyra.v1.ConfirmPasswordResetResponse
-	(*LoginRequest)(nil),                     // 11: fyra.v1.LoginRequest
-	(*LoginResponse)(nil),                    // 12: fyra.v1.LoginResponse
-	(*LogoutRequest)(nil),                    // 13: fyra.v1.LogoutRequest
-	(*LogoutResponse)(nil),                   // 14: fyra.v1.LogoutResponse
-	(*WhoAmIRequest)(nil),                    // 15: fyra.v1.WhoAmIRequest
-	(*WhoAmIResponse)(nil),                   // 16: fyra.v1.WhoAmIResponse
-	(*CreateAppRequest)(nil),                 // 17: fyra.v1.CreateAppRequest
-	(*CreateAppResponse)(nil),                // 18: fyra.v1.CreateAppResponse
-	(*ListAppsRequest)(nil),                  // 19: fyra.v1.ListAppsRequest
-	(*ListAppsResponse)(nil),                 // 20: fyra.v1.ListAppsResponse
-	(*AppInfo)(nil),                          // 21: fyra.v1.AppInfo
-	(*PushRequest)(nil),                      // 22: fyra.v1.PushRequest
-	(*PushResponse)(nil),                     // 23: fyra.v1.PushResponse
-	(*SetCustomDomainRequest)(nil),           // 24: fyra.v1.SetCustomDomainRequest
-	(*SetCustomDomainResponse)(nil),          // 25: fyra.v1.SetCustomDomainResponse
-	(*GetCertStatusRequest)(nil),             // 26: fyra.v1.GetCertStatusRequest
-	(*GetCertStatusResponse)(nil),            // 27: fyra.v1.GetCertStatusResponse
-	(*GetFreeDomainsRequest)(nil),            // 28: fyra.v1.GetFreeDomainsRequest
-	(*GetFreeDomainsResponse)(nil),           // 29: fyra.v1.GetFreeDomainsResponse
-	(*DeleteAppRequest)(nil),                 // 30: fyra.v1.DeleteAppRequest
-	(*DeleteAppResponse)(nil),                // 31: fyra.v1.DeleteAppResponse
-	(*AddonsCreateRequest)(nil),              // 32: fyra.v1.AddonsCreateRequest
-	(*AddonsCreateResponse)(nil),             // 33: fyra.v1.AddonsCreateResponse
-	(*AddonsDestroyRequest)(nil),             // 34: fyra.v1.AddonsDestroyRequest
-	(*AddonsDestroyResponse)(nil),            // 35: fyra.v1.AddonsDestroyResponse
-	(*AddonsListRequest)(nil),                // 36: fyra.v1.AddonsListRequest
-	(*AddonsListResponse)(nil),               // 37: fyra.v1.AddonsListResponse
-	(*GetRequestLogsRequest)(nil),            // 38: fyra.v1.GetRequestLogsRequest
-	(*RequestLogEntry)(nil),                  // 39: fyra.v1.RequestLogEntry
-	(*GetRequestLogsResponse)(nil),           // 40: fyra.v1.GetRequestLogsResponse
-	nil,                                      // 41: fyra.v1.AddonsCreateResponse.ConfigEntry
-	(*AddonsListResponse_AddonResource)(nil), // 42: fyra.v1.AddonsListResponse.AddonResource
-	nil,                                      // 43: fyra.v1.AddonsListResponse.AddonResource.ConfigEntry
+	(*ValidateResetCodeRequest)(nil),         // 11: fyra.v1.ValidateResetCodeRequest
+	(*ValidateResetCodeResponse)(nil),        // 12: fyra.v1.ValidateResetCodeResponse
+	(*LoginRequest)(nil),                     // 13: fyra.v1.LoginRequest
+	(*LoginResponse)(nil),                    // 14: fyra.v1.LoginResponse
+	(*LogoutRequest)(nil),                    // 15: fyra.v1.LogoutRequest
+	(*LogoutResponse)(nil),                   // 16: fyra.v1.LogoutResponse
+	(*WhoAmIRequest)(nil),                    // 17: fyra.v1.WhoAmIRequest
+	(*WhoAmIResponse)(nil),                   // 18: fyra.v1.WhoAmIResponse
+	(*CreateAppRequest)(nil),                 // 19: fyra.v1.CreateAppRequest
+	(*CreateAppResponse)(nil),                // 20: fyra.v1.CreateAppResponse
+	(*ListAppsRequest)(nil),                  // 21: fyra.v1.ListAppsRequest
+	(*ListAppsResponse)(nil),                 // 22: fyra.v1.ListAppsResponse
+	(*AppInfo)(nil),                          // 23: fyra.v1.AppInfo
+	(*PushRequest)(nil),                      // 24: fyra.v1.PushRequest
+	(*PushResponse)(nil),                     // 25: fyra.v1.PushResponse
+	(*SetCustomDomainRequest)(nil),           // 26: fyra.v1.SetCustomDomainRequest
+	(*SetCustomDomainResponse)(nil),          // 27: fyra.v1.SetCustomDomainResponse
+	(*GetCertStatusRequest)(nil),             // 28: fyra.v1.GetCertStatusRequest
+	(*GetCertStatusResponse)(nil),            // 29: fyra.v1.GetCertStatusResponse
+	(*GetFreeDomainsRequest)(nil),            // 30: fyra.v1.GetFreeDomainsRequest
+	(*GetFreeDomainsResponse)(nil),           // 31: fyra.v1.GetFreeDomainsResponse
+	(*DeleteAppRequest)(nil),                 // 32: fyra.v1.DeleteAppRequest
+	(*DeleteAppResponse)(nil),                // 33: fyra.v1.DeleteAppResponse
+	(*AddonsCreateRequest)(nil),              // 34: fyra.v1.AddonsCreateRequest
+	(*AddonsCreateResponse)(nil),             // 35: fyra.v1.AddonsCreateResponse
+	(*AddonsDestroyRequest)(nil),             // 36: fyra.v1.AddonsDestroyRequest
+	(*AddonsDestroyResponse)(nil),            // 37: fyra.v1.AddonsDestroyResponse
+	(*AddonsListRequest)(nil),                // 38: fyra.v1.AddonsListRequest
+	(*AddonsListResponse)(nil),               // 39: fyra.v1.AddonsListResponse
+	(*GetRequestLogsRequest)(nil),            // 40: fyra.v1.GetRequestLogsRequest
+	(*RequestLogEntry)(nil),                  // 41: fyra.v1.RequestLogEntry
+	(*GetRequestLogsResponse)(nil),           // 42: fyra.v1.GetRequestLogsResponse
+	nil,                                      // 43: fyra.v1.AddonsCreateResponse.ConfigEntry
+	(*AddonsListResponse_AddonResource)(nil), // 44: fyra.v1.AddonsListResponse.AddonResource
+	nil,                                      // 45: fyra.v1.AddonsListResponse.AddonResource.ConfigEntry
 }
 var file_fyra_v1_fyra_proto_depIdxs = []int32{
-	21, // 0: fyra.v1.ListAppsResponse.apps:type_name -> fyra.v1.AppInfo
+	23, // 0: fyra.v1.ListAppsResponse.apps:type_name -> fyra.v1.AppInfo
 	0,  // 1: fyra.v1.GetCertStatusResponse.status:type_name -> fyra.v1.GetCertStatusResponse.Status
-	41, // 2: fyra.v1.AddonsCreateResponse.config:type_name -> fyra.v1.AddonsCreateResponse.ConfigEntry
-	42, // 3: fyra.v1.AddonsListResponse.addons:type_name -> fyra.v1.AddonsListResponse.AddonResource
-	39, // 4: fyra.v1.GetRequestLogsResponse.entries:type_name -> fyra.v1.RequestLogEntry
-	43, // 5: fyra.v1.AddonsListResponse.AddonResource.config:type_name -> fyra.v1.AddonsListResponse.AddonResource.ConfigEntry
+	43, // 2: fyra.v1.AddonsCreateResponse.config:type_name -> fyra.v1.AddonsCreateResponse.ConfigEntry
+	44, // 3: fyra.v1.AddonsListResponse.addons:type_name -> fyra.v1.AddonsListResponse.AddonResource
+	41, // 4: fyra.v1.GetRequestLogsResponse.entries:type_name -> fyra.v1.RequestLogEntry
+	45, // 5: fyra.v1.AddonsListResponse.AddonResource.config:type_name -> fyra.v1.AddonsListResponse.AddonResource.ConfigEntry
 	1,  // 6: fyra.v1.DeployService.Register:input_type -> fyra.v1.RegisterRequest
 	3,  // 7: fyra.v1.DeployService.ConfirmEmail:input_type -> fyra.v1.ConfirmEmailRequest
 	5,  // 8: fyra.v1.DeployService.ResendConfirmation:input_type -> fyra.v1.ResendConfirmationRequest
 	7,  // 9: fyra.v1.DeployService.RequestPasswordReset:input_type -> fyra.v1.RequestPasswordResetRequest
 	9,  // 10: fyra.v1.DeployService.ConfirmPasswordReset:input_type -> fyra.v1.ConfirmPasswordResetRequest
-	11, // 11: fyra.v1.DeployService.Login:input_type -> fyra.v1.LoginRequest
-	13, // 12: fyra.v1.DeployService.Logout:input_type -> fyra.v1.LogoutRequest
-	15, // 13: fyra.v1.DeployService.WhoAmI:input_type -> fyra.v1.WhoAmIRequest
-	17, // 14: fyra.v1.DeployService.CreateApp:input_type -> fyra.v1.CreateAppRequest
-	19, // 15: fyra.v1.DeployService.ListApps:input_type -> fyra.v1.ListAppsRequest
-	22, // 16: fyra.v1.DeployService.Push:input_type -> fyra.v1.PushRequest
-	24, // 17: fyra.v1.DeployService.SetCustomDomain:input_type -> fyra.v1.SetCustomDomainRequest
-	26, // 18: fyra.v1.DeployService.GetCertStatus:input_type -> fyra.v1.GetCertStatusRequest
-	28, // 19: fyra.v1.DeployService.GetFreeDomains:input_type -> fyra.v1.GetFreeDomainsRequest
-	30, // 20: fyra.v1.DeployService.DeleteApp:input_type -> fyra.v1.DeleteAppRequest
-	32, // 21: fyra.v1.DeployService.AddonsCreate:input_type -> fyra.v1.AddonsCreateRequest
-	34, // 22: fyra.v1.DeployService.AddonsDestroy:input_type -> fyra.v1.AddonsDestroyRequest
-	36, // 23: fyra.v1.DeployService.AddonsList:input_type -> fyra.v1.AddonsListRequest
-	38, // 24: fyra.v1.DeployService.GetRequestLogs:input_type -> fyra.v1.GetRequestLogsRequest
-	2,  // 25: fyra.v1.DeployService.Register:output_type -> fyra.v1.RegisterResponse
-	4,  // 26: fyra.v1.DeployService.ConfirmEmail:output_type -> fyra.v1.ConfirmEmailResponse
-	6,  // 27: fyra.v1.DeployService.ResendConfirmation:output_type -> fyra.v1.ResendConfirmationResponse
-	8,  // 28: fyra.v1.DeployService.RequestPasswordReset:output_type -> fyra.v1.RequestPasswordResetResponse
-	10, // 29: fyra.v1.DeployService.ConfirmPasswordReset:output_type -> fyra.v1.ConfirmPasswordResetResponse
-	12, // 30: fyra.v1.DeployService.Login:output_type -> fyra.v1.LoginResponse
-	14, // 31: fyra.v1.DeployService.Logout:output_type -> fyra.v1.LogoutResponse
-	16, // 32: fyra.v1.DeployService.WhoAmI:output_type -> fyra.v1.WhoAmIResponse
-	18, // 33: fyra.v1.DeployService.CreateApp:output_type -> fyra.v1.CreateAppResponse
-	20, // 34: fyra.v1.DeployService.ListApps:output_type -> fyra.v1.ListAppsResponse
-	23, // 35: fyra.v1.DeployService.Push:output_type -> fyra.v1.PushResponse
-	25, // 36: fyra.v1.DeployService.SetCustomDomain:output_type -> fyra.v1.SetCustomDomainResponse
-	27, // 37: fyra.v1.DeployService.GetCertStatus:output_type -> fyra.v1.GetCertStatusResponse
-	29, // 38: fyra.v1.DeployService.GetFreeDomains:output_type -> fyra.v1.GetFreeDomainsResponse
-	31, // 39: fyra.v1.DeployService.DeleteApp:output_type -> fyra.v1.DeleteAppResponse
-	33, // 40: fyra.v1.DeployService.AddonsCreate:output_type -> fyra.v1.AddonsCreateResponse
-	35, // 41: fyra.v1.DeployService.AddonsDestroy:output_type -> fyra.v1.AddonsDestroyResponse
-	37, // 42: fyra.v1.DeployService.AddonsList:output_type -> fyra.v1.AddonsListResponse
-	40, // 43: fyra.v1.DeployService.GetRequestLogs:output_type -> fyra.v1.GetRequestLogsResponse
-	25, // [25:44] is the sub-list for method output_type
-	6,  // [6:25] is the sub-list for method input_type
+	11, // 11: fyra.v1.DeployService.ValidateResetCode:input_type -> fyra.v1.ValidateResetCodeRequest
+	13, // 12: fyra.v1.DeployService.Login:input_type -> fyra.v1.LoginRequest
+	15, // 13: fyra.v1.DeployService.Logout:input_type -> fyra.v1.LogoutRequest
+	17, // 14: fyra.v1.DeployService.WhoAmI:input_type -> fyra.v1.WhoAmIRequest
+	19, // 15: fyra.v1.DeployService.CreateApp:input_type -> fyra.v1.CreateAppRequest
+	21, // 16: fyra.v1.DeployService.ListApps:input_type -> fyra.v1.ListAppsRequest
+	24, // 17: fyra.v1.DeployService.Push:input_type -> fyra.v1.PushRequest
+	26, // 18: fyra.v1.DeployService.SetCustomDomain:input_type -> fyra.v1.SetCustomDomainRequest
+	28, // 19: fyra.v1.DeployService.GetCertStatus:input_type -> fyra.v1.GetCertStatusRequest
+	30, // 20: fyra.v1.DeployService.GetFreeDomains:input_type -> fyra.v1.GetFreeDomainsRequest
+	32, // 21: fyra.v1.DeployService.DeleteApp:input_type -> fyra.v1.DeleteAppRequest
+	34, // 22: fyra.v1.DeployService.AddonsCreate:input_type -> fyra.v1.AddonsCreateRequest
+	36, // 23: fyra.v1.DeployService.AddonsDestroy:input_type -> fyra.v1.AddonsDestroyRequest
+	38, // 24: fyra.v1.DeployService.AddonsList:input_type -> fyra.v1.AddonsListRequest
+	40, // 25: fyra.v1.DeployService.GetRequestLogs:input_type -> fyra.v1.GetRequestLogsRequest
+	2,  // 26: fyra.v1.DeployService.Register:output_type -> fyra.v1.RegisterResponse
+	4,  // 27: fyra.v1.DeployService.ConfirmEmail:output_type -> fyra.v1.ConfirmEmailResponse
+	6,  // 28: fyra.v1.DeployService.ResendConfirmation:output_type -> fyra.v1.ResendConfirmationResponse
+	8,  // 29: fyra.v1.DeployService.RequestPasswordReset:output_type -> fyra.v1.RequestPasswordResetResponse
+	10, // 30: fyra.v1.DeployService.ConfirmPasswordReset:output_type -> fyra.v1.ConfirmPasswordResetResponse
+	12, // 31: fyra.v1.DeployService.ValidateResetCode:output_type -> fyra.v1.ValidateResetCodeResponse
+	14, // 32: fyra.v1.DeployService.Login:output_type -> fyra.v1.LoginResponse
+	16, // 33: fyra.v1.DeployService.Logout:output_type -> fyra.v1.LogoutResponse
+	18, // 34: fyra.v1.DeployService.WhoAmI:output_type -> fyra.v1.WhoAmIResponse
+	20, // 35: fyra.v1.DeployService.CreateApp:output_type -> fyra.v1.CreateAppResponse
+	22, // 36: fyra.v1.DeployService.ListApps:output_type -> fyra.v1.ListAppsResponse
+	25, // 37: fyra.v1.DeployService.Push:output_type -> fyra.v1.PushResponse
+	27, // 38: fyra.v1.DeployService.SetCustomDomain:output_type -> fyra.v1.SetCustomDomainResponse
+	29, // 39: fyra.v1.DeployService.GetCertStatus:output_type -> fyra.v1.GetCertStatusResponse
+	31, // 40: fyra.v1.DeployService.GetFreeDomains:output_type -> fyra.v1.GetFreeDomainsResponse
+	33, // 41: fyra.v1.DeployService.DeleteApp:output_type -> fyra.v1.DeleteAppResponse
+	35, // 42: fyra.v1.DeployService.AddonsCreate:output_type -> fyra.v1.AddonsCreateResponse
+	37, // 43: fyra.v1.DeployService.AddonsDestroy:output_type -> fyra.v1.AddonsDestroyResponse
+	39, // 44: fyra.v1.DeployService.AddonsList:output_type -> fyra.v1.AddonsListResponse
+	42, // 45: fyra.v1.DeployService.GetRequestLogs:output_type -> fyra.v1.GetRequestLogsResponse
+	26, // [26:46] is the sub-list for method output_type
+	6,  // [6:26] is the sub-list for method input_type
 	6,  // [6:6] is the sub-list for extension type_name
 	6,  // [6:6] is the sub-list for extension extendee
 	0,  // [0:6] is the sub-list for field type_name
@@ -2459,7 +2556,7 @@ func file_fyra_v1_fyra_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_fyra_v1_fyra_proto_rawDesc), len(file_fyra_v1_fyra_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   43,
+			NumMessages:   45,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

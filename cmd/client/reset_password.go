@@ -38,6 +38,8 @@ func runResetPassword(cmd *cobra.Command, _ []string) error {
 		return fmt.Errorf("unexpected error")
 	}
 
-	fmt.Println(tui.SuccessIcon("Password reset! Run '" + binaryName + " auth login' to sign in."))
+	if rm.success {
+		fmt.Println(tui.SuccessIcon("Password reset! Run '" + binaryName + " auth login' to sign in."))
+	}
 	return nil
 }

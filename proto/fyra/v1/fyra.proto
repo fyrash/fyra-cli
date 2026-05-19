@@ -10,6 +10,7 @@ service DeployService {
   rpc ResendConfirmation(ResendConfirmationRequest) returns (ResendConfirmationResponse);
   rpc RequestPasswordReset(RequestPasswordResetRequest) returns (RequestPasswordResetResponse);
   rpc ConfirmPasswordReset(ConfirmPasswordResetRequest) returns (ConfirmPasswordResetResponse);
+  rpc ValidateResetCode(ValidateResetCodeRequest) returns (ValidateResetCodeResponse);
   rpc Login(LoginRequest)              returns (LoginResponse);
   rpc Logout(LogoutRequest)            returns (LogoutResponse);
   rpc WhoAmI(WhoAmIRequest)            returns (WhoAmIResponse);
@@ -41,6 +42,9 @@ message RequestPasswordResetResponse {}
 
 message ConfirmPasswordResetRequest  { string code = 1; string new_password = 2; string email = 3; }
 message ConfirmPasswordResetResponse {}
+
+message ValidateResetCodeRequest  { string code = 1; string email = 2; }
+message ValidateResetCodeResponse {}
 
 message LoginRequest  { string email = 1; string password = 2; }
 message LoginResponse { string token = 1; }

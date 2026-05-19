@@ -20,6 +20,7 @@ const (
 	stepResetSending
 	stepResetCode
 	stepResetResending
+	stepResetValidating
 	stepResetPassword
 	stepResetConfirm
 	stepResetSubmitting
@@ -37,6 +38,7 @@ type resetPasswordModel struct {
 	ctx      context.Context
 	err      error
 	quitting bool
+	success  bool
 }
 
 // resetSendResultMsg carries the result of a RequestPasswordReset RPC.
@@ -47,6 +49,8 @@ type resetSendResultMsg struct {
 }
 
 type resetConfirmResultMsg struct{ err error }
+
+type validateResultMsg struct{ err error }
 
 func newResetPasswordModel(cfg clientConfig, ctx context.Context) resetPasswordModel {
 	return resetPasswordModel{
@@ -96,6 +100,8 @@ func (m resetPasswordModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m.handleSendResult(msg)
 	case resetConfirmResultMsg:
 		return m.handleConfirmResult(msg)
+	case validateResultMsg:
+		return m.handleValidateResult(msg)
 	}
 
 	var cmd tea.Cmd
@@ -108,7 +114,7 @@ func (m resetPasswordModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.password, cmd = m.password.Update(msg)
 	case stepResetConfirm:
 		m.confirm, cmd = m.confirm.Update(msg)
-	case stepResetSending, stepResetResending, stepResetSubmitting:
+	case stepResetSending, stepResetResending, stepResetValidating, stepResetSubmitting:
 		m.spinner, cmd = m.spinner.Update(msg)
 	}
 	return m, cmd
@@ -148,6 +154,9 @@ func (m resetPasswordModel) View() string {
 
 	case stepResetResending:
 		b.WriteString(m.spinner.View() + " Sending new code...")
+
+	case stepResetValidating:
+		b.WriteString(m.spinner.View() + " Verifying code...")
 
 	case stepResetPassword:
 		b.WriteString(tui.StyleTitle.Render("Reset your password"))
@@ -204,10 +213,8 @@ func (m resetPasswordModel) handleEnter() (tea.Model, tea.Cmd) {
 			m.err = fmt.Errorf("code must be 6 digits")
 			return m, nil
 		}
-		m.step = stepResetPassword
-		m.code.Blur()
-		m.password.Focus()
-		return m, textinput.Blink
+		m.step = stepResetValidating
+		return m, tea.Batch(m.spinner.Tick, m.performValidate(code))
 
 	case stepResetPassword:
 		if m.password.Value() == "" {
@@ -226,7 +233,12 @@ func (m resetPasswordModel) handleEnter() (tea.Model, tea.Cmd) {
 	case stepResetConfirm:
 		if m.password.Value() != m.confirm.Value() {
 			m.err = fmt.Errorf("passwords do not match")
-			return m, nil
+			m.password.SetValue("")
+			m.confirm.SetValue("")
+			m.confirm.Blur()
+			m.step = stepResetPassword
+			m.password.Focus()
+			return m, textinput.Blink
 		}
 		m.step = stepResetSubmitting
 		return m, tea.Batch(m.spinner.Tick, m.performConfirm())
@@ -283,6 +295,37 @@ func (m resetPasswordModel) performConfirm() tea.Cmd {
 	}
 }
 
+func (m resetPasswordModel) performValidate(code string) tea.Cmd {
+	email := strings.TrimSpace(m.email.Value())
+	return func() tea.Msg {
+		client, cleanup, err := m.cfg.dial()
+		if err != nil {
+			return validateResultMsg{err: err}
+		}
+		defer cleanup()
+
+		_, err = client.ValidateResetCode(m.ctx, &pb.ValidateResetCodeRequest{
+			Code:  code,
+			Email: email,
+		})
+		return validateResultMsg{err: err}
+	}
+}
+
+func (m resetPasswordModel) handleValidateResult(msg validateResultMsg) (tea.Model, tea.Cmd) {
+	if msg.err != nil {
+		m.err = fmt.Errorf("invalid or expired code")
+		m.step = stepResetCode
+		m.code.SetValue("")
+		m.code.Focus()
+		return m, textinput.Blink
+	}
+	m.step = stepResetPassword
+	m.code.Blur()
+	m.password.Focus()
+	return m, textinput.Blink
+}
+
 func (m resetPasswordModel) handleSendResult(msg resetSendResultMsg) (tea.Model, tea.Cmd) {
 	if msg.err != nil {
 		m.err = fmt.Errorf("failed to send reset code: %v", msg.err)
@@ -301,6 +344,7 @@ func (m resetPasswordModel) handleConfirmResult(msg resetConfirmResultMsg) (tea.
 		return m, tea.Quit
 	}
 	m.step = stepResetDone
+	m.success = true
 	return m, tea.Quit
 }
 
