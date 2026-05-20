@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	versionURL     = "http://downloads.fyra.sh/client/latest/version.txt"
+	versionURL     = "https://downloads-cdn.fyra.sh/client/latest/version.txt"
 	updateCheckTTL = 24 * time.Hour
 	httpTimeout    = 5 * time.Second
 )
@@ -175,7 +175,7 @@ func tarballURL() (string, error) {
 	if goos == "windows" {
 		return "", fmt.Errorf("automatic update is not supported on Windows; download manually from https://fyra.sh")
 	}
-	return fmt.Sprintf("http://downloads.fyra.sh/client/latest/fyra-%s-%s.tar.gz", goos, goarch), nil
+	return fmt.Sprintf("https://downloads-cdn.fyra.sh/client/latest/fyra-%s-%s.tar.gz", goos, goarch), nil
 }
 
 // progressWriter wraps an io.Writer and prints a live download progress line to stdout.
