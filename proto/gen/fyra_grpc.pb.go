@@ -835,3 +835,219 @@ var DeployService_ServiceDesc = grpc.ServiceDesc{
 	},
 	Metadata: "fyra/v1/fyra.proto",
 }
+
+const (
+	AgentAuthService_AgentRequestLogin_FullMethodName    = "/fyra.v1.AgentAuthService/AgentRequestLogin"
+	AgentAuthService_AgentConfirmLogin_FullMethodName    = "/fyra.v1.AgentAuthService/AgentConfirmLogin"
+	AgentAuthService_AgentRequestRegister_FullMethodName = "/fyra.v1.AgentAuthService/AgentRequestRegister"
+	AgentAuthService_AgentConfirmRegister_FullMethodName = "/fyra.v1.AgentAuthService/AgentConfirmRegister"
+)
+
+// AgentAuthServiceClient is the client API for AgentAuthService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type AgentAuthServiceClient interface {
+	AgentRequestLogin(ctx context.Context, in *AgentRequestLoginRequest, opts ...grpc.CallOption) (*AgentRequestLoginResponse, error)
+	AgentConfirmLogin(ctx context.Context, in *AgentConfirmLoginRequest, opts ...grpc.CallOption) (*AgentConfirmLoginResponse, error)
+	AgentRequestRegister(ctx context.Context, in *AgentRequestRegisterRequest, opts ...grpc.CallOption) (*AgentRequestRegisterResponse, error)
+	AgentConfirmRegister(ctx context.Context, in *AgentConfirmRegisterRequest, opts ...grpc.CallOption) (*AgentConfirmRegisterResponse, error)
+}
+
+type agentAuthServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewAgentAuthServiceClient(cc grpc.ClientConnInterface) AgentAuthServiceClient {
+	return &agentAuthServiceClient{cc}
+}
+
+func (c *agentAuthServiceClient) AgentRequestLogin(ctx context.Context, in *AgentRequestLoginRequest, opts ...grpc.CallOption) (*AgentRequestLoginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AgentRequestLoginResponse)
+	err := c.cc.Invoke(ctx, AgentAuthService_AgentRequestLogin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *agentAuthServiceClient) AgentConfirmLogin(ctx context.Context, in *AgentConfirmLoginRequest, opts ...grpc.CallOption) (*AgentConfirmLoginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AgentConfirmLoginResponse)
+	err := c.cc.Invoke(ctx, AgentAuthService_AgentConfirmLogin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *agentAuthServiceClient) AgentRequestRegister(ctx context.Context, in *AgentRequestRegisterRequest, opts ...grpc.CallOption) (*AgentRequestRegisterResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AgentRequestRegisterResponse)
+	err := c.cc.Invoke(ctx, AgentAuthService_AgentRequestRegister_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *agentAuthServiceClient) AgentConfirmRegister(ctx context.Context, in *AgentConfirmRegisterRequest, opts ...grpc.CallOption) (*AgentConfirmRegisterResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AgentConfirmRegisterResponse)
+	err := c.cc.Invoke(ctx, AgentAuthService_AgentConfirmRegister_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AgentAuthServiceServer is the server API for AgentAuthService service.
+// All implementations must embed UnimplementedAgentAuthServiceServer
+// for forward compatibility.
+type AgentAuthServiceServer interface {
+	AgentRequestLogin(context.Context, *AgentRequestLoginRequest) (*AgentRequestLoginResponse, error)
+	AgentConfirmLogin(context.Context, *AgentConfirmLoginRequest) (*AgentConfirmLoginResponse, error)
+	AgentRequestRegister(context.Context, *AgentRequestRegisterRequest) (*AgentRequestRegisterResponse, error)
+	AgentConfirmRegister(context.Context, *AgentConfirmRegisterRequest) (*AgentConfirmRegisterResponse, error)
+	mustEmbedUnimplementedAgentAuthServiceServer()
+}
+
+// UnimplementedAgentAuthServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedAgentAuthServiceServer struct{}
+
+func (UnimplementedAgentAuthServiceServer) AgentRequestLogin(context.Context, *AgentRequestLoginRequest) (*AgentRequestLoginResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AgentRequestLogin not implemented")
+}
+func (UnimplementedAgentAuthServiceServer) AgentConfirmLogin(context.Context, *AgentConfirmLoginRequest) (*AgentConfirmLoginResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AgentConfirmLogin not implemented")
+}
+func (UnimplementedAgentAuthServiceServer) AgentRequestRegister(context.Context, *AgentRequestRegisterRequest) (*AgentRequestRegisterResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AgentRequestRegister not implemented")
+}
+func (UnimplementedAgentAuthServiceServer) AgentConfirmRegister(context.Context, *AgentConfirmRegisterRequest) (*AgentConfirmRegisterResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AgentConfirmRegister not implemented")
+}
+func (UnimplementedAgentAuthServiceServer) mustEmbedUnimplementedAgentAuthServiceServer() {}
+func (UnimplementedAgentAuthServiceServer) testEmbeddedByValue()                          {}
+
+// UnsafeAgentAuthServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AgentAuthServiceServer will
+// result in compilation errors.
+type UnsafeAgentAuthServiceServer interface {
+	mustEmbedUnimplementedAgentAuthServiceServer()
+}
+
+func RegisterAgentAuthServiceServer(s grpc.ServiceRegistrar, srv AgentAuthServiceServer) {
+	// If the following call panics, it indicates UnimplementedAgentAuthServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&AgentAuthService_ServiceDesc, srv)
+}
+
+func _AgentAuthService_AgentRequestLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AgentRequestLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentAuthServiceServer).AgentRequestLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentAuthService_AgentRequestLogin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentAuthServiceServer).AgentRequestLogin(ctx, req.(*AgentRequestLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AgentAuthService_AgentConfirmLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AgentConfirmLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentAuthServiceServer).AgentConfirmLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentAuthService_AgentConfirmLogin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentAuthServiceServer).AgentConfirmLogin(ctx, req.(*AgentConfirmLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AgentAuthService_AgentRequestRegister_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AgentRequestRegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentAuthServiceServer).AgentRequestRegister(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentAuthService_AgentRequestRegister_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentAuthServiceServer).AgentRequestRegister(ctx, req.(*AgentRequestRegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AgentAuthService_AgentConfirmRegister_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AgentConfirmRegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentAuthServiceServer).AgentConfirmRegister(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentAuthService_AgentConfirmRegister_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentAuthServiceServer).AgentConfirmRegister(ctx, req.(*AgentConfirmRegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// AgentAuthService_ServiceDesc is the grpc.ServiceDesc for AgentAuthService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var AgentAuthService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "fyra.v1.AgentAuthService",
+	HandlerType: (*AgentAuthServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AgentRequestLogin",
+			Handler:    _AgentAuthService_AgentRequestLogin_Handler,
+		},
+		{
+			MethodName: "AgentConfirmLogin",
+			Handler:    _AgentAuthService_AgentConfirmLogin_Handler,
+		},
+		{
+			MethodName: "AgentRequestRegister",
+			Handler:    _AgentAuthService_AgentRequestRegister_Handler,
+		},
+		{
+			MethodName: "AgentConfirmRegister",
+			Handler:    _AgentAuthService_AgentConfirmRegister_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "fyra/v1/fyra.proto",
+}

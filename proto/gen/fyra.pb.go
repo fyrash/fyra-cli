@@ -2159,6 +2159,374 @@ func (x *GetRequestLogsResponse) GetRetentionCutoffTs() string {
 	return ""
 }
 
+type AgentRequestLoginRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AgentRequestLoginRequest) Reset() {
+	*x = AgentRequestLoginRequest{}
+	mi := &file_fyra_v1_fyra_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AgentRequestLoginRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AgentRequestLoginRequest) ProtoMessage() {}
+
+func (x *AgentRequestLoginRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_fyra_v1_fyra_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AgentRequestLoginRequest.ProtoReflect.Descriptor instead.
+func (*AgentRequestLoginRequest) Descriptor() ([]byte, []int) {
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *AgentRequestLoginRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+type AgentRequestLoginResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Status        string                 `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AgentRequestLoginResponse) Reset() {
+	*x = AgentRequestLoginResponse{}
+	mi := &file_fyra_v1_fyra_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AgentRequestLoginResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AgentRequestLoginResponse) ProtoMessage() {}
+
+func (x *AgentRequestLoginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_fyra_v1_fyra_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AgentRequestLoginResponse.ProtoReflect.Descriptor instead.
+func (*AgentRequestLoginResponse) Descriptor() ([]byte, []int) {
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *AgentRequestLoginResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+type AgentConfirmLoginRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	OtpCode       string                 `protobuf:"bytes,2,opt,name=otp_code,json=otpCode,proto3" json:"otp_code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AgentConfirmLoginRequest) Reset() {
+	*x = AgentConfirmLoginRequest{}
+	mi := &file_fyra_v1_fyra_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AgentConfirmLoginRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AgentConfirmLoginRequest) ProtoMessage() {}
+
+func (x *AgentConfirmLoginRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_fyra_v1_fyra_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AgentConfirmLoginRequest.ProtoReflect.Descriptor instead.
+func (*AgentConfirmLoginRequest) Descriptor() ([]byte, []int) {
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *AgentConfirmLoginRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *AgentConfirmLoginRequest) GetOtpCode() string {
+	if x != nil {
+		return x.OtpCode
+	}
+	return ""
+}
+
+type AgentConfirmLoginResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AgentConfirmLoginResponse) Reset() {
+	*x = AgentConfirmLoginResponse{}
+	mi := &file_fyra_v1_fyra_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AgentConfirmLoginResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AgentConfirmLoginResponse) ProtoMessage() {}
+
+func (x *AgentConfirmLoginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_fyra_v1_fyra_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AgentConfirmLoginResponse.ProtoReflect.Descriptor instead.
+func (*AgentConfirmLoginResponse) Descriptor() ([]byte, []int) {
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *AgentConfirmLoginResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+type AgentRequestRegisterRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AgentRequestRegisterRequest) Reset() {
+	*x = AgentRequestRegisterRequest{}
+	mi := &file_fyra_v1_fyra_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AgentRequestRegisterRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AgentRequestRegisterRequest) ProtoMessage() {}
+
+func (x *AgentRequestRegisterRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_fyra_v1_fyra_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AgentRequestRegisterRequest.ProtoReflect.Descriptor instead.
+func (*AgentRequestRegisterRequest) Descriptor() ([]byte, []int) {
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *AgentRequestRegisterRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+type AgentRequestRegisterResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Status        string                 `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AgentRequestRegisterResponse) Reset() {
+	*x = AgentRequestRegisterResponse{}
+	mi := &file_fyra_v1_fyra_proto_msgTypes[47]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AgentRequestRegisterResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AgentRequestRegisterResponse) ProtoMessage() {}
+
+func (x *AgentRequestRegisterResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_fyra_v1_fyra_proto_msgTypes[47]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AgentRequestRegisterResponse.ProtoReflect.Descriptor instead.
+func (*AgentRequestRegisterResponse) Descriptor() ([]byte, []int) {
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{47}
+}
+
+func (x *AgentRequestRegisterResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+type AgentConfirmRegisterRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	OtpCode       string                 `protobuf:"bytes,2,opt,name=otp_code,json=otpCode,proto3" json:"otp_code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AgentConfirmRegisterRequest) Reset() {
+	*x = AgentConfirmRegisterRequest{}
+	mi := &file_fyra_v1_fyra_proto_msgTypes[48]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AgentConfirmRegisterRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AgentConfirmRegisterRequest) ProtoMessage() {}
+
+func (x *AgentConfirmRegisterRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_fyra_v1_fyra_proto_msgTypes[48]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AgentConfirmRegisterRequest.ProtoReflect.Descriptor instead.
+func (*AgentConfirmRegisterRequest) Descriptor() ([]byte, []int) {
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{48}
+}
+
+func (x *AgentConfirmRegisterRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *AgentConfirmRegisterRequest) GetOtpCode() string {
+	if x != nil {
+		return x.OtpCode
+	}
+	return ""
+}
+
+type AgentConfirmRegisterResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AgentConfirmRegisterResponse) Reset() {
+	*x = AgentConfirmRegisterResponse{}
+	mi := &file_fyra_v1_fyra_proto_msgTypes[49]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AgentConfirmRegisterResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AgentConfirmRegisterResponse) ProtoMessage() {}
+
+func (x *AgentConfirmRegisterResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_fyra_v1_fyra_proto_msgTypes[49]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AgentConfirmRegisterResponse.ProtoReflect.Descriptor instead.
+func (*AgentConfirmRegisterResponse) Descriptor() ([]byte, []int) {
+	return file_fyra_v1_fyra_proto_rawDescGZIP(), []int{49}
+}
+
+func (x *AgentConfirmRegisterResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
 type AddonsListResponse_AddonResource struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AddonId       string                 `protobuf:"bytes,1,opt,name=addon_id,json=addonId,proto3" json:"addon_id,omitempty"`
@@ -2175,7 +2543,7 @@ type AddonsListResponse_AddonResource struct {
 
 func (x *AddonsListResponse_AddonResource) Reset() {
 	*x = AddonsListResponse_AddonResource{}
-	mi := &file_fyra_v1_fyra_proto_msgTypes[43]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2187,7 +2555,7 @@ func (x *AddonsListResponse_AddonResource) String() string {
 func (*AddonsListResponse_AddonResource) ProtoMessage() {}
 
 func (x *AddonsListResponse_AddonResource) ProtoReflect() protoreflect.Message {
-	mi := &file_fyra_v1_fyra_proto_msgTypes[43]
+	mi := &file_fyra_v1_fyra_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2405,7 +2773,25 @@ const file_fyra_v1_fyra_proto_rawDesc = "" +
 	"\apayload\x18\x03 \x01(\tR\apayload\"|\n" +
 	"\x16GetRequestLogsResponse\x122\n" +
 	"\aentries\x18\x01 \x03(\v2\x18.fyra.v1.RequestLogEntryR\aentries\x12.\n" +
-	"\x13retention_cutoff_ts\x18\x02 \x01(\tR\x11retentionCutoffTs2\x80\f\n" +
+	"\x13retention_cutoff_ts\x18\x02 \x01(\tR\x11retentionCutoffTs\"0\n" +
+	"\x18AgentRequestLoginRequest\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\"3\n" +
+	"\x19AgentRequestLoginResponse\x12\x16\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\"K\n" +
+	"\x18AgentConfirmLoginRequest\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x19\n" +
+	"\botp_code\x18\x02 \x01(\tR\aotpCode\"1\n" +
+	"\x19AgentConfirmLoginResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\"3\n" +
+	"\x1bAgentRequestRegisterRequest\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\"6\n" +
+	"\x1cAgentRequestRegisterResponse\x12\x16\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\"N\n" +
+	"\x1bAgentConfirmRegisterRequest\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x19\n" +
+	"\botp_code\x18\x02 \x01(\tR\aotpCode\"4\n" +
+	"\x1cAgentConfirmRegisterResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token2\x80\f\n" +
 	"\rDeployService\x12?\n" +
 	"\bRegister\x12\x18.fyra.v1.RegisterRequest\x1a\x19.fyra.v1.RegisterResponse\x12K\n" +
 	"\fConfirmEmail\x12\x1c.fyra.v1.ConfirmEmailRequest\x1a\x1d.fyra.v1.ConfirmEmailResponse\x12]\n" +
@@ -2427,7 +2813,12 @@ const file_fyra_v1_fyra_proto_rawDesc = "" +
 	"\rAddonsDestroy\x12\x1d.fyra.v1.AddonsDestroyRequest\x1a\x1e.fyra.v1.AddonsDestroyResponse\x12E\n" +
 	"\n" +
 	"AddonsList\x12\x1a.fyra.v1.AddonsListRequest\x1a\x1b.fyra.v1.AddonsListResponse\x12Q\n" +
-	"\x0eGetRequestLogs\x12\x1e.fyra.v1.GetRequestLogsRequest\x1a\x1f.fyra.v1.GetRequestLogsResponseB&Z$github.com/fyrash/fyra-cli/proto/genb\x06proto3"
+	"\x0eGetRequestLogs\x12\x1e.fyra.v1.GetRequestLogsRequest\x1a\x1f.fyra.v1.GetRequestLogsResponse2\x94\x03\n" +
+	"\x10AgentAuthService\x12Z\n" +
+	"\x11AgentRequestLogin\x12!.fyra.v1.AgentRequestLoginRequest\x1a\".fyra.v1.AgentRequestLoginResponse\x12Z\n" +
+	"\x11AgentConfirmLogin\x12!.fyra.v1.AgentConfirmLoginRequest\x1a\".fyra.v1.AgentConfirmLoginResponse\x12c\n" +
+	"\x14AgentRequestRegister\x12$.fyra.v1.AgentRequestRegisterRequest\x1a%.fyra.v1.AgentRequestRegisterResponse\x12c\n" +
+	"\x14AgentConfirmRegister\x12$.fyra.v1.AgentConfirmRegisterRequest\x1a%.fyra.v1.AgentConfirmRegisterResponseB\x1fZ\x1ddeployeverywhere.sh/proto/genb\x06proto3"
 
 var (
 	file_fyra_v1_fyra_proto_rawDescOnce sync.Once
@@ -2442,7 +2833,7 @@ func file_fyra_v1_fyra_proto_rawDescGZIP() []byte {
 }
 
 var file_fyra_v1_fyra_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_fyra_v1_fyra_proto_msgTypes = make([]protoimpl.MessageInfo, 45)
+var file_fyra_v1_fyra_proto_msgTypes = make([]protoimpl.MessageInfo, 53)
 var file_fyra_v1_fyra_proto_goTypes = []any{
 	(GetCertStatusResponse_Status)(0),        // 0: fyra.v1.GetCertStatusResponse.Status
 	(*RegisterRequest)(nil),                  // 1: fyra.v1.RegisterRequest
@@ -2487,17 +2878,25 @@ var file_fyra_v1_fyra_proto_goTypes = []any{
 	(*GetRequestLogsRequest)(nil),            // 40: fyra.v1.GetRequestLogsRequest
 	(*RequestLogEntry)(nil),                  // 41: fyra.v1.RequestLogEntry
 	(*GetRequestLogsResponse)(nil),           // 42: fyra.v1.GetRequestLogsResponse
-	nil,                                      // 43: fyra.v1.AddonsCreateResponse.ConfigEntry
-	(*AddonsListResponse_AddonResource)(nil), // 44: fyra.v1.AddonsListResponse.AddonResource
-	nil,                                      // 45: fyra.v1.AddonsListResponse.AddonResource.ConfigEntry
+	(*AgentRequestLoginRequest)(nil),         // 43: fyra.v1.AgentRequestLoginRequest
+	(*AgentRequestLoginResponse)(nil),        // 44: fyra.v1.AgentRequestLoginResponse
+	(*AgentConfirmLoginRequest)(nil),         // 45: fyra.v1.AgentConfirmLoginRequest
+	(*AgentConfirmLoginResponse)(nil),        // 46: fyra.v1.AgentConfirmLoginResponse
+	(*AgentRequestRegisterRequest)(nil),      // 47: fyra.v1.AgentRequestRegisterRequest
+	(*AgentRequestRegisterResponse)(nil),     // 48: fyra.v1.AgentRequestRegisterResponse
+	(*AgentConfirmRegisterRequest)(nil),      // 49: fyra.v1.AgentConfirmRegisterRequest
+	(*AgentConfirmRegisterResponse)(nil),     // 50: fyra.v1.AgentConfirmRegisterResponse
+	nil,                                      // 51: fyra.v1.AddonsCreateResponse.ConfigEntry
+	(*AddonsListResponse_AddonResource)(nil), // 52: fyra.v1.AddonsListResponse.AddonResource
+	nil,                                      // 53: fyra.v1.AddonsListResponse.AddonResource.ConfigEntry
 }
 var file_fyra_v1_fyra_proto_depIdxs = []int32{
 	23, // 0: fyra.v1.ListAppsResponse.apps:type_name -> fyra.v1.AppInfo
 	0,  // 1: fyra.v1.GetCertStatusResponse.status:type_name -> fyra.v1.GetCertStatusResponse.Status
-	43, // 2: fyra.v1.AddonsCreateResponse.config:type_name -> fyra.v1.AddonsCreateResponse.ConfigEntry
-	44, // 3: fyra.v1.AddonsListResponse.addons:type_name -> fyra.v1.AddonsListResponse.AddonResource
+	51, // 2: fyra.v1.AddonsCreateResponse.config:type_name -> fyra.v1.AddonsCreateResponse.ConfigEntry
+	52, // 3: fyra.v1.AddonsListResponse.addons:type_name -> fyra.v1.AddonsListResponse.AddonResource
 	41, // 4: fyra.v1.GetRequestLogsResponse.entries:type_name -> fyra.v1.RequestLogEntry
-	45, // 5: fyra.v1.AddonsListResponse.AddonResource.config:type_name -> fyra.v1.AddonsListResponse.AddonResource.ConfigEntry
+	53, // 5: fyra.v1.AddonsListResponse.AddonResource.config:type_name -> fyra.v1.AddonsListResponse.AddonResource.ConfigEntry
 	1,  // 6: fyra.v1.DeployService.Register:input_type -> fyra.v1.RegisterRequest
 	3,  // 7: fyra.v1.DeployService.ConfirmEmail:input_type -> fyra.v1.ConfirmEmailRequest
 	5,  // 8: fyra.v1.DeployService.ResendConfirmation:input_type -> fyra.v1.ResendConfirmationRequest
@@ -2518,28 +2917,36 @@ var file_fyra_v1_fyra_proto_depIdxs = []int32{
 	36, // 23: fyra.v1.DeployService.AddonsDestroy:input_type -> fyra.v1.AddonsDestroyRequest
 	38, // 24: fyra.v1.DeployService.AddonsList:input_type -> fyra.v1.AddonsListRequest
 	40, // 25: fyra.v1.DeployService.GetRequestLogs:input_type -> fyra.v1.GetRequestLogsRequest
-	2,  // 26: fyra.v1.DeployService.Register:output_type -> fyra.v1.RegisterResponse
-	4,  // 27: fyra.v1.DeployService.ConfirmEmail:output_type -> fyra.v1.ConfirmEmailResponse
-	6,  // 28: fyra.v1.DeployService.ResendConfirmation:output_type -> fyra.v1.ResendConfirmationResponse
-	8,  // 29: fyra.v1.DeployService.RequestPasswordReset:output_type -> fyra.v1.RequestPasswordResetResponse
-	10, // 30: fyra.v1.DeployService.ConfirmPasswordReset:output_type -> fyra.v1.ConfirmPasswordResetResponse
-	12, // 31: fyra.v1.DeployService.ValidateResetCode:output_type -> fyra.v1.ValidateResetCodeResponse
-	14, // 32: fyra.v1.DeployService.Login:output_type -> fyra.v1.LoginResponse
-	16, // 33: fyra.v1.DeployService.Logout:output_type -> fyra.v1.LogoutResponse
-	18, // 34: fyra.v1.DeployService.WhoAmI:output_type -> fyra.v1.WhoAmIResponse
-	20, // 35: fyra.v1.DeployService.CreateApp:output_type -> fyra.v1.CreateAppResponse
-	22, // 36: fyra.v1.DeployService.ListApps:output_type -> fyra.v1.ListAppsResponse
-	25, // 37: fyra.v1.DeployService.Push:output_type -> fyra.v1.PushResponse
-	27, // 38: fyra.v1.DeployService.SetCustomDomain:output_type -> fyra.v1.SetCustomDomainResponse
-	29, // 39: fyra.v1.DeployService.GetCertStatus:output_type -> fyra.v1.GetCertStatusResponse
-	31, // 40: fyra.v1.DeployService.GetFreeDomains:output_type -> fyra.v1.GetFreeDomainsResponse
-	33, // 41: fyra.v1.DeployService.DeleteApp:output_type -> fyra.v1.DeleteAppResponse
-	35, // 42: fyra.v1.DeployService.AddonsCreate:output_type -> fyra.v1.AddonsCreateResponse
-	37, // 43: fyra.v1.DeployService.AddonsDestroy:output_type -> fyra.v1.AddonsDestroyResponse
-	39, // 44: fyra.v1.DeployService.AddonsList:output_type -> fyra.v1.AddonsListResponse
-	42, // 45: fyra.v1.DeployService.GetRequestLogs:output_type -> fyra.v1.GetRequestLogsResponse
-	26, // [26:46] is the sub-list for method output_type
-	6,  // [6:26] is the sub-list for method input_type
+	43, // 26: fyra.v1.AgentAuthService.AgentRequestLogin:input_type -> fyra.v1.AgentRequestLoginRequest
+	45, // 27: fyra.v1.AgentAuthService.AgentConfirmLogin:input_type -> fyra.v1.AgentConfirmLoginRequest
+	47, // 28: fyra.v1.AgentAuthService.AgentRequestRegister:input_type -> fyra.v1.AgentRequestRegisterRequest
+	49, // 29: fyra.v1.AgentAuthService.AgentConfirmRegister:input_type -> fyra.v1.AgentConfirmRegisterRequest
+	2,  // 30: fyra.v1.DeployService.Register:output_type -> fyra.v1.RegisterResponse
+	4,  // 31: fyra.v1.DeployService.ConfirmEmail:output_type -> fyra.v1.ConfirmEmailResponse
+	6,  // 32: fyra.v1.DeployService.ResendConfirmation:output_type -> fyra.v1.ResendConfirmationResponse
+	8,  // 33: fyra.v1.DeployService.RequestPasswordReset:output_type -> fyra.v1.RequestPasswordResetResponse
+	10, // 34: fyra.v1.DeployService.ConfirmPasswordReset:output_type -> fyra.v1.ConfirmPasswordResetResponse
+	12, // 35: fyra.v1.DeployService.ValidateResetCode:output_type -> fyra.v1.ValidateResetCodeResponse
+	14, // 36: fyra.v1.DeployService.Login:output_type -> fyra.v1.LoginResponse
+	16, // 37: fyra.v1.DeployService.Logout:output_type -> fyra.v1.LogoutResponse
+	18, // 38: fyra.v1.DeployService.WhoAmI:output_type -> fyra.v1.WhoAmIResponse
+	20, // 39: fyra.v1.DeployService.CreateApp:output_type -> fyra.v1.CreateAppResponse
+	22, // 40: fyra.v1.DeployService.ListApps:output_type -> fyra.v1.ListAppsResponse
+	25, // 41: fyra.v1.DeployService.Push:output_type -> fyra.v1.PushResponse
+	27, // 42: fyra.v1.DeployService.SetCustomDomain:output_type -> fyra.v1.SetCustomDomainResponse
+	29, // 43: fyra.v1.DeployService.GetCertStatus:output_type -> fyra.v1.GetCertStatusResponse
+	31, // 44: fyra.v1.DeployService.GetFreeDomains:output_type -> fyra.v1.GetFreeDomainsResponse
+	33, // 45: fyra.v1.DeployService.DeleteApp:output_type -> fyra.v1.DeleteAppResponse
+	35, // 46: fyra.v1.DeployService.AddonsCreate:output_type -> fyra.v1.AddonsCreateResponse
+	37, // 47: fyra.v1.DeployService.AddonsDestroy:output_type -> fyra.v1.AddonsDestroyResponse
+	39, // 48: fyra.v1.DeployService.AddonsList:output_type -> fyra.v1.AddonsListResponse
+	42, // 49: fyra.v1.DeployService.GetRequestLogs:output_type -> fyra.v1.GetRequestLogsResponse
+	44, // 50: fyra.v1.AgentAuthService.AgentRequestLogin:output_type -> fyra.v1.AgentRequestLoginResponse
+	46, // 51: fyra.v1.AgentAuthService.AgentConfirmLogin:output_type -> fyra.v1.AgentConfirmLoginResponse
+	48, // 52: fyra.v1.AgentAuthService.AgentRequestRegister:output_type -> fyra.v1.AgentRequestRegisterResponse
+	50, // 53: fyra.v1.AgentAuthService.AgentConfirmRegister:output_type -> fyra.v1.AgentConfirmRegisterResponse
+	30, // [30:54] is the sub-list for method output_type
+	6,  // [6:30] is the sub-list for method input_type
 	6,  // [6:6] is the sub-list for extension type_name
 	6,  // [6:6] is the sub-list for extension extendee
 	0,  // [0:6] is the sub-list for field type_name
@@ -2556,9 +2963,9 @@ func file_fyra_v1_fyra_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_fyra_v1_fyra_proto_rawDesc), len(file_fyra_v1_fyra_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   45,
+			NumMessages:   53,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_fyra_v1_fyra_proto_goTypes,
 		DependencyIndexes: file_fyra_v1_fyra_proto_depIdxs,

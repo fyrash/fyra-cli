@@ -28,6 +28,13 @@ service DeployService {
   rpc GetRequestLogs(GetRequestLogsRequest) returns (GetRequestLogsResponse);
 }
 
+service AgentAuthService {
+  rpc AgentRequestLogin(AgentRequestLoginRequest) returns (AgentRequestLoginResponse);
+  rpc AgentConfirmLogin(AgentConfirmLoginRequest) returns (AgentConfirmLoginResponse);
+  rpc AgentRequestRegister(AgentRequestRegisterRequest) returns (AgentRequestRegisterResponse);
+  rpc AgentConfirmRegister(AgentConfirmRegisterRequest) returns (AgentConfirmRegisterResponse);
+}
+
 message RegisterRequest  { string email = 1; string password = 2; }
 message RegisterResponse { string user_id = 1; }
 
@@ -194,4 +201,38 @@ message RequestLogEntry {
 message GetRequestLogsResponse {
   repeated RequestLogEntry entries             = 1;
   string                   retention_cutoff_ts = 2;
+}
+
+message AgentRequestLoginRequest {
+  string email = 1;
+}
+
+message AgentRequestLoginResponse {
+  string status = 1;
+}
+
+message AgentConfirmLoginRequest {
+  string email = 1;
+  string otp_code = 2;
+}
+
+message AgentConfirmLoginResponse {
+  string token = 1;
+}
+
+message AgentRequestRegisterRequest {
+  string email = 1;
+}
+
+message AgentRequestRegisterResponse {
+  string status = 1;
+}
+
+message AgentConfirmRegisterRequest {
+  string email = 1;
+  string otp_code = 2;
+}
+
+message AgentConfirmRegisterResponse {
+  string token = 1;
 }
