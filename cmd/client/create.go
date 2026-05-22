@@ -12,11 +12,12 @@ import (
 
 // appFile is the structure of the .deploy.yaml file written to the project directory.
 type appFile struct {
-	Slug         string `yaml:"slug"`
-	Domain       string `yaml:"domain,omitempty"`
-	Server       string `yaml:"server"`
-	CreatedAt    string `yaml:"created_at"`
-	CustomDomain string `yaml:"custom_domain,omitempty"`
+	Slug         string                 `yaml:"slug"`
+	Domain       string                 `yaml:"domain,omitempty"`
+	Server       string                 `yaml:"server"`
+	CreatedAt    string                 `yaml:"created_at"`
+	CustomDomain string                 `yaml:"custom_domain,omitempty"`
+	Config       map[string]interface{} `yaml:"config,omitempty"`
 }
 
 // writeAppFile writes af to .deploy.yaml in the current directory.

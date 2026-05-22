@@ -16,6 +16,7 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // pushStep represents the current step in the push flow.
@@ -47,6 +48,7 @@ type pushModel struct {
 	planErr      error
 	progressCh   chan pushProgressMsg
 	ignorer      *gitignore.GitIgnore
+	deployConfig map[string]interface{}
 }
 
 // pushProgressMsg carries upload progress.
@@ -68,20 +70,21 @@ type scanDoneMsg struct {
 	totalBytes int64
 }
 
-func newPushModel(slug, domain string, cfg clientConfig, ctx context.Context) pushModel {
+func newPushModel(slug, domain string, cfg clientConfig, ctx context.Context, deployConfig map[string]interface{}) pushModel {
 	bar := progress.New(progress.WithGradient(string(tui.ColorPrimary), string(tui.ColorSuccess)))
 	ignorer, _ := loadIgnoreFile(".")
 
 	return pushModel{
-		step:       stepPushScanning,
-		slug:       slug,
-		domain:     domain,
-		cfg:        cfg,
-		ctx:        ctx,
-		spinner:    tui.NewSpinner(),
-		bar:        bar,
-		progressCh: make(chan pushProgressMsg, 64),
-		ignorer:    ignorer,
+		step:         stepPushScanning,
+		slug:         slug,
+		domain:       domain,
+		cfg:          cfg,
+		ctx:          ctx,
+		spinner:      tui.NewSpinner(),
+		bar:          bar,
+		progressCh:   make(chan pushProgressMsg, 64),
+		ignorer:      ignorer,
+		deployConfig: deployConfig,
 	}
 }
 
@@ -197,7 +200,7 @@ func (m pushModel) startUpload() tea.Cmd {
 			return pushResultMsg{err: fmt.Errorf("open push stream: %w", err)}
 		}
 
-		if err := streamDirWithProgress(".", m.slug, m.domain, stream, m.totalBytes, m.progressCh, m.ignorer); err != nil {
+		if err := streamDirWithProgress(".", m.slug, m.domain, m.deployConfig, stream, m.totalBytes, m.progressCh, m.ignorer); err != nil {
 			return pushResultMsg{err: err}
 		}
 
@@ -256,12 +259,21 @@ func waitForProgress(ch chan pushProgressMsg) tea.Cmd {
 }
 
 // streamDirWithProgress streams a tarball of dir to stream, reporting progress via ch.
-func streamDirWithProgress(dir, slug, domain string, stream pb.DeployService_PushClient, total int64, ch chan pushProgressMsg, ign *gitignore.GitIgnore) error {
+func streamDirWithProgress(dir, slug, domain string, deployConfig map[string]interface{}, stream pb.DeployService_PushClient, total int64, ch chan pushProgressMsg, ign *gitignore.GitIgnore) error {
 	pr, pw := io.Pipe()
 
 	go func() {
 		pw.CloseWithError(tarballDir(dir, pw, ign))
 	}()
+
+	var configProto *structpb.Struct
+	if len(deployConfig) > 0 {
+		var err error
+		configProto, err = structpb.NewStruct(deployConfig)
+		if err != nil {
+			return fmt.Errorf("marshal deploy config: %w", err)
+		}
+	}
 
 	const chunkSize = 32 * 1024
 	buf := make([]byte, chunkSize)
@@ -275,6 +287,7 @@ func streamDirWithProgress(dir, slug, domain string, stream pb.DeployService_Pus
 			if first {
 				req.SlugName = slug
 				req.Domain = domain
+				req.Config = configProto
 				first = false
 			}
 			if sendErr := stream.Send(req); sendErr != nil {

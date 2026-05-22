@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package fyra.v1;
 
+import "google/protobuf/struct.proto";
+
 option go_package = "github.com/fyrash/fyra-cli/proto/gen";
 
 service DeployService {
@@ -87,11 +89,12 @@ message AppInfo {
   string domain        = 5; // domain zone (e.g. "apps.fyra.sh")
 }
 
-// First message: slug_name + domain + first chunk. Subsequent messages: chunk only.
+// First message: slug_name + domain + config + first chunk. Subsequent messages: chunk only.
 message PushRequest {
-  string slug_name = 1;
-  bytes  chunk     = 2;
-  string domain    = 3; // domain zone for composite lookup
+  string                slug_name = 1;
+  bytes                 chunk     = 2;
+  string                domain    = 3; // domain zone for composite lookup
+  google.protobuf.Struct config   = 4; // deploy config from .deploy.yaml, first message only
 }
 message PushResponse {
   string url          = 1;

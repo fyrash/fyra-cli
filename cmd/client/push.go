@@ -33,6 +33,7 @@ func init() {
 
 func runPush(cmd *cobra.Command, _ []string) error {
 	var slug, appDomain string
+	var deployConfig map[string]interface{}
 	if pushAppName != "" {
 		slug = pushAppName
 	} else {
@@ -42,6 +43,7 @@ func runPush(cmd *cobra.Command, _ []string) error {
 		}
 		slug = af.Slug
 		appDomain = af.Domain
+		deployConfig = af.Config
 	}
 
 	cfg, err := loadConfig()
@@ -52,7 +54,7 @@ func runPush(cmd *cobra.Command, _ []string) error {
 		return fmt.Errorf("not logged in: run '%s login' first", binaryName)
 	}
 
-	m := newPushModel(slug, appDomain, cfg, cmd.Context())
+	m := newPushModel(slug, appDomain, cfg, cmd.Context(), deployConfig)
 	final, err := tui.Run(m)
 	if err != nil {
 		return fmt.Errorf("tui: %w", err)

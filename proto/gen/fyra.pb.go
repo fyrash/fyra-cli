@@ -9,6 +9,7 @@ package gen
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	structpb "google.golang.org/protobuf/types/known/structpb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -1122,12 +1123,13 @@ func (x *AppInfo) GetDomain() string {
 	return ""
 }
 
-// First message: slug_name + domain + first chunk. Subsequent messages: chunk only.
+// First message: slug_name + domain + config + first chunk. Subsequent messages: chunk only.
 type PushRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	SlugName      string                 `protobuf:"bytes,1,opt,name=slug_name,json=slugName,proto3" json:"slug_name,omitempty"`
 	Chunk         []byte                 `protobuf:"bytes,2,opt,name=chunk,proto3" json:"chunk,omitempty"`
 	Domain        string                 `protobuf:"bytes,3,opt,name=domain,proto3" json:"domain,omitempty"` // domain zone for composite lookup
+	Config        *structpb.Struct       `protobuf:"bytes,4,opt,name=config,proto3" json:"config,omitempty"` // deploy config from .deploy.yaml, first message only
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1181,6 +1183,13 @@ func (x *PushRequest) GetDomain() string {
 		return x.Domain
 	}
 	return ""
+}
+
+func (x *PushRequest) GetConfig() *structpb.Struct {
+	if x != nil {
+		return x.Config
+	}
+	return nil
 }
 
 type PushResponse struct {
@@ -2631,7 +2640,7 @@ var File_fyra_v1_fyra_proto protoreflect.FileDescriptor
 
 const file_fyra_v1_fyra_proto_rawDesc = "" +
 	"\n" +
-	"\x12fyra/v1/fyra.proto\x12\afyra.v1\"C\n" +
+	"\x12fyra/v1/fyra.proto\x12\afyra.v1\x1a\x1cgoogle/protobuf/struct.proto\"C\n" +
 	"\x0fRegisterRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"+\n" +
@@ -2684,11 +2693,12 @@ const file_fyra_v1_fyra_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x03 \x01(\tR\tcreatedAt\x12#\n" +
 	"\rcustom_domain\x18\x04 \x01(\tR\fcustomDomain\x12\x16\n" +
-	"\x06domain\x18\x05 \x01(\tR\x06domain\"X\n" +
+	"\x06domain\x18\x05 \x01(\tR\x06domain\"\x89\x01\n" +
 	"\vPushRequest\x12\x1b\n" +
 	"\tslug_name\x18\x01 \x01(\tR\bslugName\x12\x14\n" +
 	"\x05chunk\x18\x02 \x01(\fR\x05chunk\x12\x16\n" +
-	"\x06domain\x18\x03 \x01(\tR\x06domain\"C\n" +
+	"\x06domain\x18\x03 \x01(\tR\x06domain\x12/\n" +
+	"\x06config\x18\x04 \x01(\v2\x17.google.protobuf.StructR\x06config\"C\n" +
 	"\fPushResponse\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x12!\n" +
 	"\ffirst_deploy\x18\x02 \x01(\bR\vfirstDeploy\"l\n" +
@@ -2818,7 +2828,7 @@ const file_fyra_v1_fyra_proto_rawDesc = "" +
 	"\x11AgentRequestLogin\x12!.fyra.v1.AgentRequestLoginRequest\x1a\".fyra.v1.AgentRequestLoginResponse\x12Z\n" +
 	"\x11AgentConfirmLogin\x12!.fyra.v1.AgentConfirmLoginRequest\x1a\".fyra.v1.AgentConfirmLoginResponse\x12c\n" +
 	"\x14AgentRequestRegister\x12$.fyra.v1.AgentRequestRegisterRequest\x1a%.fyra.v1.AgentRequestRegisterResponse\x12c\n" +
-	"\x14AgentConfirmRegister\x12$.fyra.v1.AgentConfirmRegisterRequest\x1a%.fyra.v1.AgentConfirmRegisterResponseB\x1fZ\x1ddeployeverywhere.sh/proto/genb\x06proto3"
+	"\x14AgentConfirmRegister\x12$.fyra.v1.AgentConfirmRegisterRequest\x1a%.fyra.v1.AgentConfirmRegisterResponseB&Z$github.com/fyrash/fyra-cli/proto/genb\x06proto3"
 
 var (
 	file_fyra_v1_fyra_proto_rawDescOnce sync.Once
@@ -2889,67 +2899,69 @@ var file_fyra_v1_fyra_proto_goTypes = []any{
 	nil,                                      // 51: fyra.v1.AddonsCreateResponse.ConfigEntry
 	(*AddonsListResponse_AddonResource)(nil), // 52: fyra.v1.AddonsListResponse.AddonResource
 	nil,                                      // 53: fyra.v1.AddonsListResponse.AddonResource.ConfigEntry
+	(*structpb.Struct)(nil),                  // 54: google.protobuf.Struct
 }
 var file_fyra_v1_fyra_proto_depIdxs = []int32{
 	23, // 0: fyra.v1.ListAppsResponse.apps:type_name -> fyra.v1.AppInfo
-	0,  // 1: fyra.v1.GetCertStatusResponse.status:type_name -> fyra.v1.GetCertStatusResponse.Status
-	51, // 2: fyra.v1.AddonsCreateResponse.config:type_name -> fyra.v1.AddonsCreateResponse.ConfigEntry
-	52, // 3: fyra.v1.AddonsListResponse.addons:type_name -> fyra.v1.AddonsListResponse.AddonResource
-	41, // 4: fyra.v1.GetRequestLogsResponse.entries:type_name -> fyra.v1.RequestLogEntry
-	53, // 5: fyra.v1.AddonsListResponse.AddonResource.config:type_name -> fyra.v1.AddonsListResponse.AddonResource.ConfigEntry
-	1,  // 6: fyra.v1.DeployService.Register:input_type -> fyra.v1.RegisterRequest
-	3,  // 7: fyra.v1.DeployService.ConfirmEmail:input_type -> fyra.v1.ConfirmEmailRequest
-	5,  // 8: fyra.v1.DeployService.ResendConfirmation:input_type -> fyra.v1.ResendConfirmationRequest
-	7,  // 9: fyra.v1.DeployService.RequestPasswordReset:input_type -> fyra.v1.RequestPasswordResetRequest
-	9,  // 10: fyra.v1.DeployService.ConfirmPasswordReset:input_type -> fyra.v1.ConfirmPasswordResetRequest
-	11, // 11: fyra.v1.DeployService.ValidateResetCode:input_type -> fyra.v1.ValidateResetCodeRequest
-	13, // 12: fyra.v1.DeployService.Login:input_type -> fyra.v1.LoginRequest
-	15, // 13: fyra.v1.DeployService.Logout:input_type -> fyra.v1.LogoutRequest
-	17, // 14: fyra.v1.DeployService.WhoAmI:input_type -> fyra.v1.WhoAmIRequest
-	19, // 15: fyra.v1.DeployService.CreateApp:input_type -> fyra.v1.CreateAppRequest
-	21, // 16: fyra.v1.DeployService.ListApps:input_type -> fyra.v1.ListAppsRequest
-	24, // 17: fyra.v1.DeployService.Push:input_type -> fyra.v1.PushRequest
-	26, // 18: fyra.v1.DeployService.SetCustomDomain:input_type -> fyra.v1.SetCustomDomainRequest
-	28, // 19: fyra.v1.DeployService.GetCertStatus:input_type -> fyra.v1.GetCertStatusRequest
-	30, // 20: fyra.v1.DeployService.GetFreeDomains:input_type -> fyra.v1.GetFreeDomainsRequest
-	32, // 21: fyra.v1.DeployService.DeleteApp:input_type -> fyra.v1.DeleteAppRequest
-	34, // 22: fyra.v1.DeployService.AddonsCreate:input_type -> fyra.v1.AddonsCreateRequest
-	36, // 23: fyra.v1.DeployService.AddonsDestroy:input_type -> fyra.v1.AddonsDestroyRequest
-	38, // 24: fyra.v1.DeployService.AddonsList:input_type -> fyra.v1.AddonsListRequest
-	40, // 25: fyra.v1.DeployService.GetRequestLogs:input_type -> fyra.v1.GetRequestLogsRequest
-	43, // 26: fyra.v1.AgentAuthService.AgentRequestLogin:input_type -> fyra.v1.AgentRequestLoginRequest
-	45, // 27: fyra.v1.AgentAuthService.AgentConfirmLogin:input_type -> fyra.v1.AgentConfirmLoginRequest
-	47, // 28: fyra.v1.AgentAuthService.AgentRequestRegister:input_type -> fyra.v1.AgentRequestRegisterRequest
-	49, // 29: fyra.v1.AgentAuthService.AgentConfirmRegister:input_type -> fyra.v1.AgentConfirmRegisterRequest
-	2,  // 30: fyra.v1.DeployService.Register:output_type -> fyra.v1.RegisterResponse
-	4,  // 31: fyra.v1.DeployService.ConfirmEmail:output_type -> fyra.v1.ConfirmEmailResponse
-	6,  // 32: fyra.v1.DeployService.ResendConfirmation:output_type -> fyra.v1.ResendConfirmationResponse
-	8,  // 33: fyra.v1.DeployService.RequestPasswordReset:output_type -> fyra.v1.RequestPasswordResetResponse
-	10, // 34: fyra.v1.DeployService.ConfirmPasswordReset:output_type -> fyra.v1.ConfirmPasswordResetResponse
-	12, // 35: fyra.v1.DeployService.ValidateResetCode:output_type -> fyra.v1.ValidateResetCodeResponse
-	14, // 36: fyra.v1.DeployService.Login:output_type -> fyra.v1.LoginResponse
-	16, // 37: fyra.v1.DeployService.Logout:output_type -> fyra.v1.LogoutResponse
-	18, // 38: fyra.v1.DeployService.WhoAmI:output_type -> fyra.v1.WhoAmIResponse
-	20, // 39: fyra.v1.DeployService.CreateApp:output_type -> fyra.v1.CreateAppResponse
-	22, // 40: fyra.v1.DeployService.ListApps:output_type -> fyra.v1.ListAppsResponse
-	25, // 41: fyra.v1.DeployService.Push:output_type -> fyra.v1.PushResponse
-	27, // 42: fyra.v1.DeployService.SetCustomDomain:output_type -> fyra.v1.SetCustomDomainResponse
-	29, // 43: fyra.v1.DeployService.GetCertStatus:output_type -> fyra.v1.GetCertStatusResponse
-	31, // 44: fyra.v1.DeployService.GetFreeDomains:output_type -> fyra.v1.GetFreeDomainsResponse
-	33, // 45: fyra.v1.DeployService.DeleteApp:output_type -> fyra.v1.DeleteAppResponse
-	35, // 46: fyra.v1.DeployService.AddonsCreate:output_type -> fyra.v1.AddonsCreateResponse
-	37, // 47: fyra.v1.DeployService.AddonsDestroy:output_type -> fyra.v1.AddonsDestroyResponse
-	39, // 48: fyra.v1.DeployService.AddonsList:output_type -> fyra.v1.AddonsListResponse
-	42, // 49: fyra.v1.DeployService.GetRequestLogs:output_type -> fyra.v1.GetRequestLogsResponse
-	44, // 50: fyra.v1.AgentAuthService.AgentRequestLogin:output_type -> fyra.v1.AgentRequestLoginResponse
-	46, // 51: fyra.v1.AgentAuthService.AgentConfirmLogin:output_type -> fyra.v1.AgentConfirmLoginResponse
-	48, // 52: fyra.v1.AgentAuthService.AgentRequestRegister:output_type -> fyra.v1.AgentRequestRegisterResponse
-	50, // 53: fyra.v1.AgentAuthService.AgentConfirmRegister:output_type -> fyra.v1.AgentConfirmRegisterResponse
-	30, // [30:54] is the sub-list for method output_type
-	6,  // [6:30] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	54, // 1: fyra.v1.PushRequest.config:type_name -> google.protobuf.Struct
+	0,  // 2: fyra.v1.GetCertStatusResponse.status:type_name -> fyra.v1.GetCertStatusResponse.Status
+	51, // 3: fyra.v1.AddonsCreateResponse.config:type_name -> fyra.v1.AddonsCreateResponse.ConfigEntry
+	52, // 4: fyra.v1.AddonsListResponse.addons:type_name -> fyra.v1.AddonsListResponse.AddonResource
+	41, // 5: fyra.v1.GetRequestLogsResponse.entries:type_name -> fyra.v1.RequestLogEntry
+	53, // 6: fyra.v1.AddonsListResponse.AddonResource.config:type_name -> fyra.v1.AddonsListResponse.AddonResource.ConfigEntry
+	1,  // 7: fyra.v1.DeployService.Register:input_type -> fyra.v1.RegisterRequest
+	3,  // 8: fyra.v1.DeployService.ConfirmEmail:input_type -> fyra.v1.ConfirmEmailRequest
+	5,  // 9: fyra.v1.DeployService.ResendConfirmation:input_type -> fyra.v1.ResendConfirmationRequest
+	7,  // 10: fyra.v1.DeployService.RequestPasswordReset:input_type -> fyra.v1.RequestPasswordResetRequest
+	9,  // 11: fyra.v1.DeployService.ConfirmPasswordReset:input_type -> fyra.v1.ConfirmPasswordResetRequest
+	11, // 12: fyra.v1.DeployService.ValidateResetCode:input_type -> fyra.v1.ValidateResetCodeRequest
+	13, // 13: fyra.v1.DeployService.Login:input_type -> fyra.v1.LoginRequest
+	15, // 14: fyra.v1.DeployService.Logout:input_type -> fyra.v1.LogoutRequest
+	17, // 15: fyra.v1.DeployService.WhoAmI:input_type -> fyra.v1.WhoAmIRequest
+	19, // 16: fyra.v1.DeployService.CreateApp:input_type -> fyra.v1.CreateAppRequest
+	21, // 17: fyra.v1.DeployService.ListApps:input_type -> fyra.v1.ListAppsRequest
+	24, // 18: fyra.v1.DeployService.Push:input_type -> fyra.v1.PushRequest
+	26, // 19: fyra.v1.DeployService.SetCustomDomain:input_type -> fyra.v1.SetCustomDomainRequest
+	28, // 20: fyra.v1.DeployService.GetCertStatus:input_type -> fyra.v1.GetCertStatusRequest
+	30, // 21: fyra.v1.DeployService.GetFreeDomains:input_type -> fyra.v1.GetFreeDomainsRequest
+	32, // 22: fyra.v1.DeployService.DeleteApp:input_type -> fyra.v1.DeleteAppRequest
+	34, // 23: fyra.v1.DeployService.AddonsCreate:input_type -> fyra.v1.AddonsCreateRequest
+	36, // 24: fyra.v1.DeployService.AddonsDestroy:input_type -> fyra.v1.AddonsDestroyRequest
+	38, // 25: fyra.v1.DeployService.AddonsList:input_type -> fyra.v1.AddonsListRequest
+	40, // 26: fyra.v1.DeployService.GetRequestLogs:input_type -> fyra.v1.GetRequestLogsRequest
+	43, // 27: fyra.v1.AgentAuthService.AgentRequestLogin:input_type -> fyra.v1.AgentRequestLoginRequest
+	45, // 28: fyra.v1.AgentAuthService.AgentConfirmLogin:input_type -> fyra.v1.AgentConfirmLoginRequest
+	47, // 29: fyra.v1.AgentAuthService.AgentRequestRegister:input_type -> fyra.v1.AgentRequestRegisterRequest
+	49, // 30: fyra.v1.AgentAuthService.AgentConfirmRegister:input_type -> fyra.v1.AgentConfirmRegisterRequest
+	2,  // 31: fyra.v1.DeployService.Register:output_type -> fyra.v1.RegisterResponse
+	4,  // 32: fyra.v1.DeployService.ConfirmEmail:output_type -> fyra.v1.ConfirmEmailResponse
+	6,  // 33: fyra.v1.DeployService.ResendConfirmation:output_type -> fyra.v1.ResendConfirmationResponse
+	8,  // 34: fyra.v1.DeployService.RequestPasswordReset:output_type -> fyra.v1.RequestPasswordResetResponse
+	10, // 35: fyra.v1.DeployService.ConfirmPasswordReset:output_type -> fyra.v1.ConfirmPasswordResetResponse
+	12, // 36: fyra.v1.DeployService.ValidateResetCode:output_type -> fyra.v1.ValidateResetCodeResponse
+	14, // 37: fyra.v1.DeployService.Login:output_type -> fyra.v1.LoginResponse
+	16, // 38: fyra.v1.DeployService.Logout:output_type -> fyra.v1.LogoutResponse
+	18, // 39: fyra.v1.DeployService.WhoAmI:output_type -> fyra.v1.WhoAmIResponse
+	20, // 40: fyra.v1.DeployService.CreateApp:output_type -> fyra.v1.CreateAppResponse
+	22, // 41: fyra.v1.DeployService.ListApps:output_type -> fyra.v1.ListAppsResponse
+	25, // 42: fyra.v1.DeployService.Push:output_type -> fyra.v1.PushResponse
+	27, // 43: fyra.v1.DeployService.SetCustomDomain:output_type -> fyra.v1.SetCustomDomainResponse
+	29, // 44: fyra.v1.DeployService.GetCertStatus:output_type -> fyra.v1.GetCertStatusResponse
+	31, // 45: fyra.v1.DeployService.GetFreeDomains:output_type -> fyra.v1.GetFreeDomainsResponse
+	33, // 46: fyra.v1.DeployService.DeleteApp:output_type -> fyra.v1.DeleteAppResponse
+	35, // 47: fyra.v1.DeployService.AddonsCreate:output_type -> fyra.v1.AddonsCreateResponse
+	37, // 48: fyra.v1.DeployService.AddonsDestroy:output_type -> fyra.v1.AddonsDestroyResponse
+	39, // 49: fyra.v1.DeployService.AddonsList:output_type -> fyra.v1.AddonsListResponse
+	42, // 50: fyra.v1.DeployService.GetRequestLogs:output_type -> fyra.v1.GetRequestLogsResponse
+	44, // 51: fyra.v1.AgentAuthService.AgentRequestLogin:output_type -> fyra.v1.AgentRequestLoginResponse
+	46, // 52: fyra.v1.AgentAuthService.AgentConfirmLogin:output_type -> fyra.v1.AgentConfirmLoginResponse
+	48, // 53: fyra.v1.AgentAuthService.AgentRequestRegister:output_type -> fyra.v1.AgentRequestRegisterResponse
+	50, // 54: fyra.v1.AgentAuthService.AgentConfirmRegister:output_type -> fyra.v1.AgentConfirmRegisterResponse
+	31, // [31:55] is the sub-list for method output_type
+	7,  // [7:31] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_fyra_v1_fyra_proto_init() }
