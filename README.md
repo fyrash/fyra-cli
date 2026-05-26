@@ -1,6 +1,9 @@
 # 🔥 fyra
 
-`fyra` is a command-line tool for deploying static sites and single-page applications onto [fyra.sh](https://fyra.sh)
+🏗️  Own AS, Bare Metal. Independent static hosting with zero vendor lock-in.
+🤖 AI Agents can deploy autonomously via llms.txt.
+
+`fyra` is a command-line tool for deploying static sites and single-page applications onto [fyra.sh](https://fyra.sh?utm_source=github)
 
 Push a directory, get a live URL behind a CDN, no Dockerfiles, no build packs, no config files.
 
@@ -20,7 +23,7 @@ curl -fsSL https://fyra.sh/install.sh | sh
 
 ## Documentation
 
-To find out more on how to use the cli, check out our <a href="https://fyra.sh/help.html">documentation</a>.
+To find out more on how to use the cli, check out our <a href="https://fyra.sh/help.html?utm_source=github">documentation</a>.
 
 ## Building
 
