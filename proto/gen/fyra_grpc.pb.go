@@ -31,6 +31,7 @@ const (
 	DeployService_CreateApp_FullMethodName            = "/fyra.v1.DeployService/CreateApp"
 	DeployService_ListApps_FullMethodName             = "/fyra.v1.DeployService/ListApps"
 	DeployService_Push_FullMethodName                 = "/fyra.v1.DeployService/Push"
+	DeployService_GetDeployManifest_FullMethodName    = "/fyra.v1.DeployService/GetDeployManifest"
 	DeployService_SetCustomDomain_FullMethodName      = "/fyra.v1.DeployService/SetCustomDomain"
 	DeployService_GetCertStatus_FullMethodName        = "/fyra.v1.DeployService/GetCertStatus"
 	DeployService_GetFreeDomains_FullMethodName       = "/fyra.v1.DeployService/GetFreeDomains"
@@ -57,6 +58,7 @@ type DeployServiceClient interface {
 	CreateApp(ctx context.Context, in *CreateAppRequest, opts ...grpc.CallOption) (*CreateAppResponse, error)
 	ListApps(ctx context.Context, in *ListAppsRequest, opts ...grpc.CallOption) (*ListAppsResponse, error)
 	Push(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[PushRequest, PushResponse], error)
+	GetDeployManifest(ctx context.Context, in *GetDeployManifestRequest, opts ...grpc.CallOption) (*DeployManifest, error)
 	SetCustomDomain(ctx context.Context, in *SetCustomDomainRequest, opts ...grpc.CallOption) (*SetCustomDomainResponse, error)
 	GetCertStatus(ctx context.Context, in *GetCertStatusRequest, opts ...grpc.CallOption) (*GetCertStatusResponse, error)
 	GetFreeDomains(ctx context.Context, in *GetFreeDomainsRequest, opts ...grpc.CallOption) (*GetFreeDomainsResponse, error)
@@ -198,6 +200,16 @@ func (c *deployServiceClient) Push(ctx context.Context, opts ...grpc.CallOption)
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type DeployService_PushClient = grpc.ClientStreamingClient[PushRequest, PushResponse]
 
+func (c *deployServiceClient) GetDeployManifest(ctx context.Context, in *GetDeployManifestRequest, opts ...grpc.CallOption) (*DeployManifest, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeployManifest)
+	err := c.cc.Invoke(ctx, DeployService_GetDeployManifest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *deployServiceClient) SetCustomDomain(ctx context.Context, in *SetCustomDomainRequest, opts ...grpc.CallOption) (*SetCustomDomainResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SetCustomDomainResponse)
@@ -294,6 +306,7 @@ type DeployServiceServer interface {
 	CreateApp(context.Context, *CreateAppRequest) (*CreateAppResponse, error)
 	ListApps(context.Context, *ListAppsRequest) (*ListAppsResponse, error)
 	Push(grpc.ClientStreamingServer[PushRequest, PushResponse]) error
+	GetDeployManifest(context.Context, *GetDeployManifestRequest) (*DeployManifest, error)
 	SetCustomDomain(context.Context, *SetCustomDomainRequest) (*SetCustomDomainResponse, error)
 	GetCertStatus(context.Context, *GetCertStatusRequest) (*GetCertStatusResponse, error)
 	GetFreeDomains(context.Context, *GetFreeDomainsRequest) (*GetFreeDomainsResponse, error)
@@ -347,6 +360,9 @@ func (UnimplementedDeployServiceServer) ListApps(context.Context, *ListAppsReque
 }
 func (UnimplementedDeployServiceServer) Push(grpc.ClientStreamingServer[PushRequest, PushResponse]) error {
 	return status.Error(codes.Unimplemented, "method Push not implemented")
+}
+func (UnimplementedDeployServiceServer) GetDeployManifest(context.Context, *GetDeployManifestRequest) (*DeployManifest, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetDeployManifest not implemented")
 }
 func (UnimplementedDeployServiceServer) SetCustomDomain(context.Context, *SetCustomDomainRequest) (*SetCustomDomainResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetCustomDomain not implemented")
@@ -598,6 +614,24 @@ func _DeployService_Push_Handler(srv interface{}, stream grpc.ServerStream) erro
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type DeployService_PushServer = grpc.ClientStreamingServer[PushRequest, PushResponse]
 
+func _DeployService_GetDeployManifest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDeployManifestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeployServiceServer).GetDeployManifest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DeployService_GetDeployManifest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeployServiceServer).GetDeployManifest(ctx, req.(*GetDeployManifestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DeployService_SetCustomDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetCustomDomainRequest)
 	if err := dec(in); err != nil {
@@ -792,6 +826,10 @@ var DeployService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListApps",
 			Handler:    _DeployService_ListApps_Handler,
+		},
+		{
+			MethodName: "GetDeployManifest",
+			Handler:    _DeployService_GetDeployManifest_Handler,
 		},
 		{
 			MethodName: "SetCustomDomain",
