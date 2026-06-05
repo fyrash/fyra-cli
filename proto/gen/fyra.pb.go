@@ -1419,6 +1419,7 @@ func (x *SetCustomDomainRequest) GetAppDomain() string {
 type SetCustomDomainResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ServerIp      string                 `protobuf:"bytes,1,opt,name=server_ip,json=serverIp,proto3" json:"server_ip,omitempty"` // public IP of the deployment server; point DNS here
+	CnameAddr     string                 `protobuf:"bytes,2,opt,name=cname_addr,json=cnameAddr,proto3" json:"cname_addr,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1456,6 +1457,13 @@ func (*SetCustomDomainResponse) Descriptor() ([]byte, []int) {
 func (x *SetCustomDomainResponse) GetServerIp() string {
 	if x != nil {
 		return x.ServerIp
+	}
+	return ""
+}
+
+func (x *SetCustomDomainResponse) GetCnameAddr() string {
+	if x != nil {
+		return x.CnameAddr
 	}
 	return ""
 }
@@ -2832,9 +2840,11 @@ const file_fyra_v1_fyra_proto_rawDesc = "" +
 	"\tslug_name\x18\x01 \x01(\tR\bslugName\x12\x16\n" +
 	"\x06domain\x18\x02 \x01(\tR\x06domain\x12\x1d\n" +
 	"\n" +
-	"app_domain\x18\x03 \x01(\tR\tappDomain\"6\n" +
+	"app_domain\x18\x03 \x01(\tR\tappDomain\"U\n" +
 	"\x17SetCustomDomainResponse\x12\x1b\n" +
-	"\tserver_ip\x18\x01 \x01(\tR\bserverIp\"j\n" +
+	"\tserver_ip\x18\x01 \x01(\tR\bserverIp\x12\x1d\n" +
+	"\n" +
+	"cname_addr\x18\x02 \x01(\tR\tcnameAddr\"j\n" +
 	"\x14GetCertStatusRequest\x12\x1b\n" +
 	"\tslug_name\x18\x01 \x01(\tR\bslugName\x12\x16\n" +
 	"\x06domain\x18\x02 \x01(\tR\x06domain\x12\x1d\n" +
@@ -2955,7 +2965,7 @@ const file_fyra_v1_fyra_proto_rawDesc = "" +
 	"\x11AgentRequestLogin\x12!.fyra.v1.AgentRequestLoginRequest\x1a\".fyra.v1.AgentRequestLoginResponse\x12Z\n" +
 	"\x11AgentConfirmLogin\x12!.fyra.v1.AgentConfirmLoginRequest\x1a\".fyra.v1.AgentConfirmLoginResponse\x12c\n" +
 	"\x14AgentRequestRegister\x12$.fyra.v1.AgentRequestRegisterRequest\x1a%.fyra.v1.AgentRequestRegisterResponse\x12c\n" +
-	"\x14AgentConfirmRegister\x12$.fyra.v1.AgentConfirmRegisterRequest\x1a%.fyra.v1.AgentConfirmRegisterResponseB\x1fZ\x1ddeployeverywhere.sh/proto/genb\x06proto3"
+	"\x14AgentConfirmRegister\x12$.fyra.v1.AgentConfirmRegisterRequest\x1a%.fyra.v1.AgentConfirmRegisterResponseB&Z$github.com/fyrash/fyra-cli/proto/genb\x06proto3"
 
 var (
 	file_fyra_v1_fyra_proto_rawDescOnce sync.Once
