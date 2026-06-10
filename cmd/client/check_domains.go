@@ -66,8 +66,7 @@ type getStatusFunc func() (*pb.GetCertStatusResponse, error)
 // It treats FAILED the same as PENDING — the server retries provisioning on each call,
 // so we keep polling until it eventually succeeds or the user hits Ctrl+C.
 func pollCertStatus(ctx context.Context, getStatus getStatusFunc) error {
-	fmt.Println("Waiting for certificate... (Ctrl+C to stop)")
-	firstPoll := true
+	fmt.Println("Waiting for certificate... (this can take a few minutes, Ctrl+C to stop)")
 	var lastStatus pb.GetCertStatusResponse_Status
 	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
@@ -83,10 +82,11 @@ func pollCertStatus(ctx context.Context, getStatus getStatusFunc) error {
 			return fmt.Errorf("get cert status: %w", err)
 		}
 
-		if firstPoll || resp.Status != lastStatus {
+		if resp.Status != lastStatus {
 			fmt.Printf("Certificate status: %s\n", resp.StatusMessage)
 			lastStatus = resp.Status
-			firstPoll = false
+		} else {
+			fmt.Println("Still waiting for certificate...")
 		}
 
 		if resp.Status == pb.GetCertStatusResponse_CERT_STATUS_COMPLETED {
@@ -134,14 +134,6 @@ func runCheckDomains(cmd *cobra.Command, _ []string) error {
 		return nil
 	}
 
-	// Client-side CNAME verification.
-	// Apex domains on Cloudflare use CNAME flattening: the CNAME is resolved
-	// transparently and only A records are returned. Fall back to A-record
-	// comparison when the direct CNAME lookup doesn't match.
-	if err := verifyCNAMEOrARecords(domain, target); err != nil {
-		return err
-	}
-	fmt.Println("✓ CNAME verified.")
 
 	// Connect to server to trigger cert retry and check status.
 	cfg, err := loadConfig()
