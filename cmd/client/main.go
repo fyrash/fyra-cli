@@ -56,6 +56,7 @@ func init() {
 	rootCmd.AddCommand(logsCmd)
 	rootCmd.AddCommand(authCmd)
 	authCmd.AddCommand(resetPasswordCmd)
+	rootCmd.AddCommand(infoCmd)
 }
 
 func main() {

@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/fyrash/fyra-cli/cmd/client/tui"
+	"github.com/fyrash/fyra-cli/internal/appindex"
 )
 
 var addonsListCmd = &cobra.Command{
@@ -30,6 +31,10 @@ func runAddonsList(cmd *cobra.Command, _ []string) error {
 	appSlug, domain, err := resolveApp(cmd)
 	if err != nil {
 		return err
+	}
+
+	if absP, err := absCwd(); err == nil && appSlug != "" {
+		_ = appindex.Register(appSlug, absP)
 	}
 
 	cfg, err := loadConfig()
@@ -65,6 +70,10 @@ func runAddonsInfo(cmd *cobra.Command, args []string) error {
 	appSlug, domain, err := resolveApp(cmd)
 	if err != nil {
 		return err
+	}
+
+	if absP, err := absCwd(); err == nil && appSlug != "" {
+		_ = appindex.Register(appSlug, absP)
 	}
 
 	cfg, err := loadConfig()

@@ -21,6 +21,7 @@ import (
 
 	pb "github.com/fyrash/fyra-cli/proto/gen"
 	"github.com/fyrash/fyra-cli/cmd/client/tui"
+	"github.com/fyrash/fyra-cli/internal/appindex"
 )
 
 var pushAppName string
@@ -48,6 +49,10 @@ func runPush(cmd *cobra.Command, _ []string) error {
 		slug = af.Slug
 		appDomain = af.Domain
 		deployConfig = af.Config
+	}
+
+	if absP, err := absCwd(); err == nil && slug != "" {
+		_ = appindex.Register(slug, absP)
 	}
 
 	cfg, err := loadConfig()

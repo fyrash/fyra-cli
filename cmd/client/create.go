@@ -106,3 +106,8 @@ func runCreate(cmd *cobra.Command, _ []string) error {
 	fmt.Printf("Run '%s push' to deploy this directory.\n", binaryName)
 	return nil
 }
+
+// absCwd returns the absolute path of the current working directory.
+func absCwd() (string, error) {
+	return os.Getwd()
+}

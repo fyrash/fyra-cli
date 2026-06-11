@@ -10,6 +10,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/fyrash/fyra-cli/cmd/client/tui"
+	"github.com/fyrash/fyra-cli/internal/appindex"
 	pb "github.com/fyrash/fyra-cli/proto/gen"
 )
 
@@ -144,8 +145,12 @@ func (m listModel) handleResult(msg listResultMsg) (tea.Model, tea.Cmd) {
 		{Title: "Slug", Width: 24},
 		{Title: "URL", Width: 40},
 		{Title: "Custom Domain", Width: 30},
+		{Title: "Local Path", Width: 30},
 		{Title: "Created", Width: 12},
 	}
+
+	// Load local app index for path lookups.
+	index, _ := appindex.Load()
 
 	rows := make([]table.Row, len(msg.apps))
 	for i, a := range msg.apps {
@@ -157,11 +162,15 @@ func (m listModel) handleResult(msg listResultMsg) (tea.Model, tea.Cmd) {
 		if domain == "" {
 			domain = "-"
 		}
+		localPath := "-"
+		if p, ok := index[a.SlugName]; ok {
+			localPath = p.Path
+		}
 		created := a.CreatedAt
 		if len(created) >= 10 {
 			created = created[:10]
 		}
-		rows[i] = table.Row{a.SlugName, url, domain, created}
+		rows[i] = table.Row{a.SlugName, url, domain, localPath, created}
 	}
 
 	m.table = table.New(

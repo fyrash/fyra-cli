@@ -14,6 +14,7 @@ import (
 
 	"github.com/fyrash/fyra-cli/cmd/client/tui"
 	pb "github.com/fyrash/fyra-cli/proto/gen"
+	"github.com/fyrash/fyra-cli/internal/appindex"
 )
 
 var setDomainCmd = &cobra.Command{
@@ -32,6 +33,10 @@ func runSetDomain(cmd *cobra.Command, args []string) error {
 	af, err := readAppFile()
 	if err != nil {
 		return err
+	}
+
+	if absP, err := absCwd(); err == nil && af.Slug != "" {
+		_ = appindex.Register(af.Slug, absP)
 	}
 
 	cfg, err := loadConfig()
