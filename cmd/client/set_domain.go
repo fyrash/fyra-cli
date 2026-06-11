@@ -78,7 +78,7 @@ func runSetDomain(cmd *cobra.Command, args []string) error {
 	fmt.Printf("Custom domain set to %s.\n", domain)
 	fmt.Println()
 	fmt.Printf("  Add a CNAME record:\n")
-	fmt.Printf("    %s → %s\n", cnameAddr)
+	fmt.Printf("    %s → %s\n", cnameAddr, domain)
 	fmt.Println()
 	fmt.Printf("  (or an A record to %s if your DNS provider doesn't support CNAME at apex)\n", serverIP)
 	fmt.Println()
