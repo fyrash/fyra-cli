@@ -176,6 +176,7 @@ func (m listModel) handleResult(msg listResultMsg) (tea.Model, tea.Cmd) {
 	m.table = table.New(
 		table.WithColumns(columns),
 		table.WithRows(rows),
+		table.WithHeight(len(rows)+1),
 		table.WithFocused(false),
 		table.WithStyles(tui.NewTableStyles()),
 	)
