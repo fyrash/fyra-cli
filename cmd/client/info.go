@@ -15,16 +15,29 @@ var infoCmd = &cobra.Command{
 	RunE:  runInfo,
 }
 
+func init() {
+	infoCmd.Flags().String("app", "", "app slug (default: read from .deploy.yaml)")
+}
+
 func runInfo(cmd *cobra.Command, _ []string) error {
-	af, err := readAppFile()
-	if err != nil {
-		return err
+	var slug, appDomain string
+
+	appFlag, _ := cmd.Flags().GetString("app")
+	if appFlag != "" {
+		slug = appFlag
+	} else {
+		af, err := readAppFile()
+		if err != nil {
+			return err
+		}
+		slug = af.Slug
+		appDomain = af.Domain
 	}
 
 	// Register this app's local path in the index.
 	absPath, _ := absCwd()
-	if absPath != "" && af.Slug != "" {
-		_ = appindex.Register(af.Slug, absPath)
+	if absPath != "" && slug != "" {
+		_ = appindex.Register(slug, absPath)
 	}
 
 	cfg, err := loadConfig()
@@ -32,7 +45,7 @@ func runInfo(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	m := newInfoModel(af.Slug, af.Domain, cfg, cmd.Context())
+	m := newInfoModel(slug, appDomain, cfg, cmd.Context())
 	final, err := tui.Run(m)
 	if err != nil {
 		return fmt.Errorf("tui: %w", err)

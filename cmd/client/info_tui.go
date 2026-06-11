@@ -10,6 +10,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/fyrash/fyra-cli/cmd/client/tui"
+	"github.com/fyrash/fyra-cli/internal/appindex"
 	pb "github.com/fyrash/fyra-cli/proto/gen"
 )
 
@@ -205,6 +206,20 @@ func (m infoModel) handleResult(msg infoAppResultMsg) (tea.Model, tea.Cmd) {
 		table.Row{"Domain Zone", app.Domain},
 		table.Row{"Created", created},
 	)
+
+	// Show local path info from the app index.
+	if index, _ := appindex.Load(); index != nil {
+		if entry, ok := index[app.SlugName]; ok {
+			rows = append(rows,
+				table.Row{"Local Path", entry.Path},
+			)
+			if entry.LastSeen != "" {
+				rows = append(rows,
+					table.Row{"Last Seen", entry.LastSeen},
+				)
+			}
+		}
+	}
 
 	if len(msg.addons) > 0 {
 		rows = append(rows, table.Row{"Addons", ""})
