@@ -32,12 +32,12 @@ func runInfo(cmd *cobra.Command, _ []string) error {
 		}
 		slug = af.Slug
 		appDomain = af.Domain
-	}
 
-	// Register this app's local path in the index.
-	absPath, _ := absCwd()
-	if absPath != "" && slug != "" {
-		_ = appindex.Register(slug, absPath)
+		// Register this app's local path in the index (only when
+		// reading from .deploy.yaml — we're in the project directory).
+		if absPath, err := absCwd(); err == nil {
+			_ = appindex.Register(slug, absPath)
+		}
 	}
 
 	cfg, err := loadConfig()
