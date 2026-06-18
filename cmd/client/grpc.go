@@ -9,8 +9,8 @@ import (
 
 	pb "github.com/fyrash/fyra-cli/proto/gen"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
@@ -19,8 +19,8 @@ import (
 func appendClientMetadata(ctx context.Context) context.Context {
 	return metadata.AppendToOutgoingContext(ctx,
 		"x-cli-version", version,
-		"x-cli-os",     runtime.GOOS,
-		"x-cli-arch",   runtime.GOARCH,
+		"x-cli-os", runtime.GOOS,
+		"x-cli-arch", runtime.GOARCH,
 	)
 }
 
@@ -45,7 +45,7 @@ func authContext(ctx context.Context, token string) context.Context {
 // DeployServiceClient plus a cleanup function. The cleanup function must be
 // called when the client is no longer needed (typically via defer).
 func (cfg clientConfig) dial() (pb.DeployServiceClient, func(), error) {
-	cc := credentials.NewTLS(&tls.Config{})
+	cc := credentials.NewTLS(&tls.Config{InsecureSkipVerify: true})
 
 	conn, err := grpc.NewClient(cfg.ServerAddress,
 		grpc.WithTransportCredentials(cc),

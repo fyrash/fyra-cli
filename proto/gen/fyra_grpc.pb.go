@@ -39,6 +39,7 @@ const (
 	DeployService_AddonsCreate_FullMethodName         = "/fyra.v1.DeployService/AddonsCreate"
 	DeployService_AddonsDestroy_FullMethodName        = "/fyra.v1.DeployService/AddonsDestroy"
 	DeployService_AddonsList_FullMethodName           = "/fyra.v1.DeployService/AddonsList"
+	DeployService_AddonsDashboard_FullMethodName      = "/fyra.v1.DeployService/AddonsDashboard"
 	DeployService_GetRequestLogs_FullMethodName       = "/fyra.v1.DeployService/GetRequestLogs"
 )
 
@@ -66,6 +67,7 @@ type DeployServiceClient interface {
 	AddonsCreate(ctx context.Context, in *AddonsCreateRequest, opts ...grpc.CallOption) (*AddonsCreateResponse, error)
 	AddonsDestroy(ctx context.Context, in *AddonsDestroyRequest, opts ...grpc.CallOption) (*AddonsDestroyResponse, error)
 	AddonsList(ctx context.Context, in *AddonsListRequest, opts ...grpc.CallOption) (*AddonsListResponse, error)
+	AddonsDashboard(ctx context.Context, in *AddonsDashboardRequest, opts ...grpc.CallOption) (*AddonsDashboardResponse, error)
 	GetRequestLogs(ctx context.Context, in *GetRequestLogsRequest, opts ...grpc.CallOption) (*GetRequestLogsResponse, error)
 }
 
@@ -280,6 +282,16 @@ func (c *deployServiceClient) AddonsList(ctx context.Context, in *AddonsListRequ
 	return out, nil
 }
 
+func (c *deployServiceClient) AddonsDashboard(ctx context.Context, in *AddonsDashboardRequest, opts ...grpc.CallOption) (*AddonsDashboardResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddonsDashboardResponse)
+	err := c.cc.Invoke(ctx, DeployService_AddonsDashboard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *deployServiceClient) GetRequestLogs(ctx context.Context, in *GetRequestLogsRequest, opts ...grpc.CallOption) (*GetRequestLogsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetRequestLogsResponse)
@@ -314,6 +326,7 @@ type DeployServiceServer interface {
 	AddonsCreate(context.Context, *AddonsCreateRequest) (*AddonsCreateResponse, error)
 	AddonsDestroy(context.Context, *AddonsDestroyRequest) (*AddonsDestroyResponse, error)
 	AddonsList(context.Context, *AddonsListRequest) (*AddonsListResponse, error)
+	AddonsDashboard(context.Context, *AddonsDashboardRequest) (*AddonsDashboardResponse, error)
 	GetRequestLogs(context.Context, *GetRequestLogsRequest) (*GetRequestLogsResponse, error)
 	mustEmbedUnimplementedDeployServiceServer()
 }
@@ -384,6 +397,9 @@ func (UnimplementedDeployServiceServer) AddonsDestroy(context.Context, *AddonsDe
 }
 func (UnimplementedDeployServiceServer) AddonsList(context.Context, *AddonsListRequest) (*AddonsListResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddonsList not implemented")
+}
+func (UnimplementedDeployServiceServer) AddonsDashboard(context.Context, *AddonsDashboardRequest) (*AddonsDashboardResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddonsDashboard not implemented")
 }
 func (UnimplementedDeployServiceServer) GetRequestLogs(context.Context, *GetRequestLogsRequest) (*GetRequestLogsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRequestLogs not implemented")
@@ -758,6 +774,24 @@ func _DeployService_AddonsList_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DeployService_AddonsDashboard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddonsDashboardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeployServiceServer).AddonsDashboard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DeployService_AddonsDashboard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeployServiceServer).AddonsDashboard(ctx, req.(*AddonsDashboardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DeployService_GetRequestLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRequestLogsRequest)
 	if err := dec(in); err != nil {
@@ -858,6 +892,10 @@ var DeployService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddonsList",
 			Handler:    _DeployService_AddonsList_Handler,
+		},
+		{
+			MethodName: "AddonsDashboard",
+			Handler:    _DeployService_AddonsDashboard_Handler,
 		},
 		{
 			MethodName: "GetRequestLogs",

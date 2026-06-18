@@ -28,6 +28,7 @@ service DeployService {
   rpc AddonsCreate(AddonsCreateRequest)   returns (AddonsCreateResponse);
   rpc AddonsDestroy(AddonsDestroyRequest) returns (AddonsDestroyResponse);
   rpc AddonsList(AddonsListRequest)       returns (AddonsListResponse);
+  rpc AddonsDashboard(AddonsDashboardRequest) returns (AddonsDashboardResponse);
   rpc GetRequestLogs(GetRequestLogsRequest) returns (GetRequestLogsResponse);
 }
 
@@ -120,7 +121,7 @@ message SetCustomDomainRequest {
 }
 message SetCustomDomainResponse {
   string server_ip = 1; // public IP of the deployment server; point DNS here
-  string cname_addr = 2;
+  string cname_addr = 2; // cname address for user to update/set.
 }
 
 message GetCertStatusRequest {
@@ -196,6 +197,16 @@ message AddonsListResponse {
     string message             = 8;
   }
   repeated AddonResource addons = 1;
+}
+
+message AddonsDashboardRequest {
+  string addon_id = 1;
+  string app_slug = 2;
+  string domain   = 3; // domain zone for composite app lookup
+}
+
+message AddonsDashboardResponse {
+  string redirect_url = 1;
 }
 
 // ── Request Logs RPC ─────────────────────────────────────────────────────────────
