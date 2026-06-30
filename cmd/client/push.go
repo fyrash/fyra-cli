@@ -16,15 +16,17 @@ import (
 	"github.com/charmbracelet/bubbles/progress"
 	gitignore "github.com/sabhiram/go-gitignore"
 	"github.com/spf13/cobra"
+	"golang.org/x/term"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/fyrash/fyra-cli/proto/gen"
 	"github.com/fyrash/fyra-cli/cmd/client/tui"
 	"github.com/fyrash/fyra-cli/internal/appindex"
+	pb "github.com/fyrash/fyra-cli/proto/gen"
 )
 
 var pushAppName string
+var pushNonInteractiveFlag bool
 
 var pushCmd = &cobra.Command{
 	Use:   "push",
@@ -34,6 +36,7 @@ var pushCmd = &cobra.Command{
 
 func init() {
 	pushCmd.Flags().StringVar(&pushAppName, "appname", "", "app slug to push to (overrides .deploy.yaml)")
+	pushCmd.Flags().BoolVar(&pushNonInteractiveFlag, "non-interactive", false, "skip the live progress TUI (auto-enabled when stdout is not a TTY)")
 }
 
 func runPush(cmd *cobra.Command, _ []string) error {
@@ -61,6 +64,12 @@ func runPush(cmd *cobra.Command, _ []string) error {
 	}
 	if cfg.Token == "" {
 		return fmt.Errorf("not logged in: run '%s login' first", binaryName)
+	}
+
+	// Non-interactive path: explicit flag OR auto-detected when stdout is not
+	// a TTY (e.g. CI, piped to a file, or any wrapping that strips the TTY).
+	if pushNonInteractiveFlag || !term.IsTerminal(int(os.Stdout.Fd())) {
+		return runPushNonInteractive(cmd.Context(), cfg, slug, appDomain, deployConfig, os.Stdout)
 	}
 
 	m := newPushModel(slug, appDomain, cfg, cmd.Context(), deployConfig)
@@ -358,4 +367,162 @@ func tarballDir(dir string, w io.Writer, ign *gitignore.GitIgnore) error {
 	tw.Close() //nolint:errcheck
 	gw.Close() //nolint:errcheck
 	return err
+}
+
+// pushStreamFn opens a streaming Push RPC. Production passes a closure over
+// client.Push; tests pass a stub that returns a fake stream.
+type pushStreamFn func(ctx context.Context) (pb.DeployService_PushClient, error)
+
+// manifestFn fetches the server's deploy manifest for diffing. Production
+// passes a closure over fetchManifest; tests pass a stub.
+type manifestFn func(ctx context.Context, slug, domain string) (map[string]string, error)
+
+// runPushNonInteractive is the CI-friendly entry point. It dials once, builds
+// the stream and manifest seam closures, then delegates to the testable core.
+func runPushNonInteractive(ctx context.Context, cfg clientConfig, slug, domain string, deployConfig map[string]interface{}, out io.Writer) error {
+	client, cleanup, err := cfg.dial()
+	if err != nil {
+		return fmt.Errorf("connect to server: %w", err)
+	}
+	defer cleanup()
+
+	openStream := func(ctx context.Context) (pb.DeployService_PushClient, error) {
+		return client.Push(ctx)
+	}
+	manifestFetch := func(ctx context.Context, slug, domain string) (map[string]string, error) {
+		return fetchManifest(ctx, cfg, slug, domain)
+	}
+	return pushNonInteractive(ctx, cfg, slug, domain, pushAppName != "", deployConfig, out, openStream, manifestFetch)
+}
+
+// pushNonInteractive is the testable core of the non-interactive push path.
+// The seam parameters (openStream, fetchManifestFn) keep this function off the
+// network so unit tests can exercise diff logic, error mapping, and output
+// formatting with stubs.
+func pushNonInteractive(
+	ctx context.Context,
+	cfg clientConfig,
+	slug, domain string,
+	saveAppFile bool,
+	deployConfig map[string]interface{},
+	out io.Writer,
+	openStream pushStreamFn,
+	fetchManifestFn manifestFn,
+) error {
+	if cfg.Token == "" {
+		return fmt.Errorf("not logged in: run '%s login' first", binaryName)
+	}
+
+	ignorer, _ := loadIgnoreFile(".")
+
+	// Local file hashes feed both the diff and the manifest we send on first chunk.
+	localFiles, err := scanDirWithHashes(".", ignorer)
+	if err != nil {
+		return fmt.Errorf("hash files: %w", err)
+	}
+
+	// Fetch server manifest. Errors here are non-fatal — fall back to full push.
+	serverManifest, _ := fetchManifestFn(ctx, slug, domain)
+
+	var (
+		diff       *diffResult
+		totalBytes int64
+		fileCount  int
+	)
+
+	switch {
+	case len(serverManifest) > 0:
+		uploadPaths, toDelete := computeDiff(localFiles, serverManifest)
+		if len(uploadPaths) == 0 && len(toDelete) == 0 {
+			n := len(localFiles)
+			fileWord := "files"
+			if n == 1 {
+				fileWord = "file"
+			}
+			fmt.Fprintf(out, "Already up to date — %d %s unchanged.\n", n, fileWord)
+			return nil
+		}
+
+		uploadSet := make(map[string]bool, len(uploadPaths))
+		var uploadBytes int64
+		for _, p := range uploadPaths {
+			uploadSet[p] = true
+			if info, err := os.Stat(p); err == nil {
+				uploadBytes += info.Size()
+			}
+		}
+		diff = &diffResult{
+			toUpload:    uploadSet,
+			toDelete:    toDelete,
+			localFiles:  localFiles,
+			uploadCount: len(uploadPaths),
+			uploadBytes: uploadBytes,
+			unchanged:   len(localFiles) - len(uploadPaths),
+		}
+		totalBytes = uploadBytes
+		fileCount = len(uploadPaths)
+
+	default:
+		// First deploy or fetch failure: full push, still send the manifest so
+		// the server can save it for the next diff.
+		_, totalBytes, err = scanDir(".", ignorer)
+		if err != nil {
+			return fmt.Errorf("scan directory: %w", err)
+		}
+		diff = &diffResult{localFiles: localFiles, fullPush: true}
+		fileCount = len(localFiles)
+	}
+
+	authCtx := authContext(ctx, cfg.Token)
+	stream, err := openStream(authCtx)
+	if err != nil {
+		return fmt.Errorf("open push stream: %w", err)
+	}
+
+	// Drain progress messages — we don't render a live bar in non-interactive
+	// mode, but stream{Dir,Diff}WithProgress still emits on the channel and
+	// would block once the 64-message buffer fills.
+	progressCh := make(chan pushProgressMsg, 64)
+	progressDone := make(chan struct{})
+	go func() {
+		for range progressCh {
+		}
+		close(progressDone)
+	}()
+
+	if diff.fullPush {
+		err = streamDirWithProgress(".", slug, domain, deployConfig, stream, totalBytes, progressCh, ignorer, diff.localFiles)
+	} else {
+		err = streamDiffWithProgress(".", slug, domain, deployConfig, stream, totalBytes, progressCh, diff)
+	}
+	close(progressCh)
+	<-progressDone
+	if err != nil {
+		return err
+	}
+
+	resp, err := stream.CloseAndRecv()
+	if err != nil {
+		return friendlyPushError(err)
+	}
+
+	if saveAppFile {
+		if err := writeAppFile(appFile{Slug: slug, Server: cfg.ServerAddress}); err != nil {
+			return fmt.Errorf("save .deploy.yaml: %w", err)
+		}
+	}
+
+	if diff.fullPush {
+		fmt.Fprintf(out, "Uploaded %s (%d files)\n", formatBytes(totalBytes), fileCount)
+	} else {
+		fmt.Fprintf(out, "Uploaded %s (%d changed, %d deleted, %d unchanged)\n",
+			formatBytes(totalBytes), fileCount, len(diff.toDelete), diff.unchanged)
+	}
+	if resp.FirstDeploy {
+		fmt.Fprintf(out, "Live: https://%s\n", resp.Url)
+		fmt.Fprintln(out, "First deploy — DNS may take a moment to propagate.")
+	} else {
+		fmt.Fprintf(out, "Done: https://%s\n", resp.Url)
+	}
+	return nil
 }
