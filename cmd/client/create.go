@@ -1,13 +1,17 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"io"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
 	"github.com/fyrash/fyra-cli/cmd/client/tui"
+	pb "github.com/fyrash/fyra-cli/proto/gen"
 )
 
 // appFile is the structure of the .deploy.yaml file written to the project directory.
@@ -61,6 +65,7 @@ var createCmd = &cobra.Command{
 
 func init() {
 	createCmd.Flags().String("appname", "", "app slug name (default: auto-generated)")
+	createCmd.Flags().String("domain", "", "free domain zone for the app (non-interactive mode; requires --appname)")
 }
 
 func runCreate(cmd *cobra.Command, _ []string) error {
@@ -74,6 +79,18 @@ func runCreate(cmd *cobra.Command, _ []string) error {
 	}
 
 	appname, _ := cmd.Flags().GetString("appname")
+	domainFlag, _ := cmd.Flags().GetString("domain")
+
+	// Non-interactive mode: --domain set skips the TUI entirely.
+	if domainFlag != "" {
+		if appname == "" {
+			return fmt.Errorf("non-interactive mode requires --appname when --domain is set")
+		}
+		if cfg.Token == "" {
+			return fmt.Errorf("not logged in: run '%s login' first", binaryName)
+		}
+		return runCreateNonInteractive(cmd.Context(), cfg, appname, domainFlag, os.Stdout)
+	}
 
 	m := newCreateModel(appname, cfg, cmd.Context())
 	final, err := tui.Run(m)
@@ -110,4 +127,57 @@ func runCreate(cmd *cobra.Command, _ []string) error {
 // absCwd returns the absolute path of the current working directory.
 func absCwd() (string, error) {
 	return os.Getwd()
+}
+
+// createFn is the gRPC call seam for the non-interactive create path. It takes
+// the already-authenticated context and request and returns the server
+// response. Production callers pass client.CreateApp; tests pass a stub.
+type createFn func(ctx context.Context, req *pb.CreateAppRequest) (*pb.CreateAppResponse, error)
+
+// runCreateNonInteractive creates an app without launching the TUI. It is the
+// CI-friendly path invoked when --domain is set. It dials the server using the
+// same plumbing as the TUI path, then delegates to createNonInteractive.
+func runCreateNonInteractive(ctx context.Context, cfg clientConfig, appname, domain string, out io.Writer) error {
+	client, cleanup, err := cfg.dial()
+	if err != nil {
+		return fmt.Errorf("connect to server: %w", err)
+	}
+	defer cleanup()
+	create := func(ctx context.Context, req *pb.CreateAppRequest) (*pb.CreateAppResponse, error) {
+		return client.CreateApp(ctx, req)
+	}
+	return createNonInteractive(ctx, cfg, appname, domain, out, create)
+}
+
+// createNonInteractive is the testable core of the non-interactive create path.
+// The createFn parameter is the seam: production passes client.CreateApp,
+// tests pass a stub — no real network needed.
+func createNonInteractive(
+	ctx context.Context,
+	cfg clientConfig,
+	appname, domain string,
+	out io.Writer,
+	create createFn,
+) error {
+	authCtx := authContext(ctx, cfg.Token)
+	resp, err := create(authCtx, &pb.CreateAppRequest{
+		SlugName: strings.TrimSpace(appname),
+		Domain:   domain,
+	})
+	if err != nil {
+		return fmt.Errorf("create app: %w", err)
+	}
+
+	if err := writeAppFile(appFile{
+		Slug:      resp.SlugName,
+		Domain:    resp.Domain,
+		Server:    cfg.ServerAddress,
+		CreatedAt: resp.CreatedAt,
+	}); err != nil {
+		return err
+	}
+
+	fmt.Fprintf(out, "Created app: %s.%s\n", resp.SlugName, resp.Domain)
+	fmt.Fprintf(out, "Run '%s push' to deploy this directory.\n", binaryName)
+	return nil
 }
