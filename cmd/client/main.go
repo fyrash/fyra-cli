@@ -36,7 +36,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default: ~/.fyra/config.yaml)")
-	rootCmd.PersistentFlags().String("server", "server.fyra.sh:50051", "override server address (env: DEPLOY_SERVER)")
+	rootCmd.PersistentFlags().String("server", "server.fyra.sh:50052", "override server address (env: DEPLOY_SERVER)")
 	rootCmd.AddCommand(registerCmd)
 	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(logoutCmd)
