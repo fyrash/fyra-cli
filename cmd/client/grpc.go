@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"os"
 	"runtime"
 	"strings"
 
@@ -14,6 +15,14 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
+
+// insecureVerifyEnabled reports whether the user has opted out of TLS
+// certificate verification via the INSECURE_VERIFY env var. This should
+// only be used against a server whose certificate does not match the
+// hostname (e.g. local development with a self-signed cert).
+func insecureVerifyEnabled() bool {
+	return strings.EqualFold(os.Getenv("INSECURE_VERIFY"), "true")
+}
 
 // appendClientMetadata adds CLI version and platform metadata to the context.
 func appendClientMetadata(ctx context.Context) context.Context {
@@ -45,7 +54,13 @@ func authContext(ctx context.Context, token string) context.Context {
 // DeployServiceClient plus a cleanup function. The cleanup function must be
 // called when the client is no longer needed (typically via defer).
 func (cfg clientConfig) dial() (pb.DeployServiceClient, func(), error) {
-	cc := credentials.NewTLS(&tls.Config{InsecureSkipVerify: true})
+	tlsCfg := &tls.Config{}
+	if insecureVerifyEnabled() {
+		tlsCfg.InsecureSkipVerify = true
+		fmt.Fprintln(os.Stderr, "warning: INSECURE_VERIFY is on — server certificate will not be validated")
+	}
+
+	cc := credentials.NewTLS(tlsCfg)
 
 	conn, err := grpc.NewClient(cfg.ServerAddress,
 		grpc.WithTransportCredentials(cc),
