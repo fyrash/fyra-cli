@@ -197,6 +197,17 @@ func shouldSkip(name, relPath string, isDir bool, ign *gitignore.GitIgnore) bool
 	if name == ".deploy.yaml" {
 		return true
 	}
+	// Hardcoded secret exclusions — these must never ship even if the
+	// user forgot to list them in .fyraignore. Matched on base name so
+	// rules apply at any depth (e.g. apps/api/.env.production).
+	if strings.HasPrefix(name, ".env") ||
+		strings.HasSuffix(name, ".pem") ||
+		strings.HasSuffix(name, ".key") ||
+		strings.HasSuffix(name, ".p12") ||
+		strings.HasSuffix(name, ".pfx") ||
+		name == ".netrc" {
+		return true
+	}
 	if ign != nil && ign.MatchesPath(relPath) {
 		return true
 	}
