@@ -161,6 +161,24 @@ func TestIsSecretFile(t *testing.T) {
 	}
 }
 
+func TestPruneDir(t *testing.T) {
+	cases := []struct {
+		name string
+		want bool
+	}{
+		{".git", true},
+		{"node_modules", true},
+		{"src", false},
+		{"vendor", false},
+		{".github", false},
+	}
+	for _, c := range cases {
+		if got := pruneDir(c.name); got != c.want {
+			t.Errorf("pruneDir(%q) = %v, want %v", c.name, got, c.want)
+		}
+	}
+}
+
 func TestSkippedSecretFiles(t *testing.T) {
 	dir := t.TempDir()
 	mustWrite(t, dir, "index.html", "<html>")

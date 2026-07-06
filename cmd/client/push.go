@@ -71,10 +71,12 @@ func runPush(cmd *cobra.Command, _ []string) error {
 
 	// Surface any secret files the push withholds by default, so the user knows
 	// sensitive files that were not gitignored are still being kept out of the
-	// deploy. Printed before the TUI starts (which renders inline) so it stays
-	// visible on both the interactive and non-interactive paths.
+	// deploy. Written to stderr (not stdout) so the notice stays out of any
+	// piped `fyra push` output a CI/CD job might consume, and printed before the
+	// TUI starts so it stays visible on both the interactive and non-interactive
+	// paths.
 	ignorer, _ := loadIgnoreFile(".")
-	warnSkippedSecrets(os.Stdout, skippedSecretFiles(".", ignorer))
+	warnSkippedSecrets(os.Stderr, skippedSecretFiles(".", ignorer))
 
 	// Non-interactive path: explicit flag OR auto-detected when stdout is not
 	// a TTY (e.g. CI, piped to a file, or any wrapping that strips the TTY).
@@ -282,9 +284,17 @@ func loadIgnoreFile(dir string) (*gitignore.GitIgnore, error) {
 	return gitignore.CompileIgnoreFile(path)
 }
 
+// pruneDir reports whether a directory should be pruned from the walk entirely
+// (never descended into). Centralizing the list here keeps shouldSkip and
+// skippedSecretFiles from drifting: a directory added here is skipped by the
+// tarball AND excluded from the secret-file warning in lockstep.
+func pruneDir(name string) bool {
+	return name == ".git" || name == "node_modules"
+}
+
 // shouldSkip returns true if the file or directory should be excluded from the tarball.
 func shouldSkip(name, relPath string, isDir bool, ign *gitignore.GitIgnore) bool {
-	if isDir && (name == ".git" || name == "node_modules") {
+	if isDir && pruneDir(name) {
 		return true
 	}
 	if name == ".deploy.yaml" {
@@ -328,7 +338,7 @@ func skippedSecretFiles(dir string, ign *gitignore.GitIgnore) []string {
 			return nil // best-effort: never block a push on a walk error
 		}
 		if d.IsDir() {
-			if d.Name() == ".git" || d.Name() == "node_modules" {
+			if pruneDir(d.Name()) {
 				return filepath.SkipDir
 			}
 			return nil
