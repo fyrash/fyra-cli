@@ -170,6 +170,9 @@ func friendlyPushError(err error) error {
 		if strings.Contains(err.Error(), "email not confirmed") {
 			return fmt.Errorf("please confirm your email first. Run '%s confirm' to resend the code.", binaryName)
 		}
+		if strings.Contains(err.Error(), "password protection") {
+			return fmt.Errorf("this site uses .auth password protection, which isn't available on your plan. Remove the .auth file(s) and push again, or upgrade your plan to keep using it.")
+		}
 		return fmt.Errorf("you don't have permission to push to that app")
 	case codes.Unauthenticated:
 		return fmt.Errorf("not logged in: run '%s login' first", binaryName)
