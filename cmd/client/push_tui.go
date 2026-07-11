@@ -51,7 +51,7 @@ type pushModel struct {
 	progressCh   chan pushProgressMsg
 	ignorer      *gitignore.GitIgnore
 	deployConfig map[string]interface{}
-	diffResult   *diffResult // nil if full push
+	diffResult   *diffResult // set after diff; nil only when hashing failed and we degraded to a full push
 }
 
 // pushProgressMsg carries upload progress.
@@ -73,15 +73,29 @@ type scanDoneMsg struct {
 	totalBytes int64
 }
 
-// diffResult holds the result of diff computation.
+// pushKind discriminates the three mutually exclusive outcomes of a push.
+type pushKind int
+
+const (
+	// pushKindNone: server manifest matches local — nothing to upload or delete.
+	pushKindNone pushKind = iota
+	// pushKindIncremental: upload only the changed files in toUpload, delete toDelete.
+	pushKindIncremental
+	// pushKindFull: upload every local file (first deploy, or manifest fetch failed).
+	pushKindFull
+)
+
+// diffResult holds the result of diff computation. The kind field is the
+// single discriminator for control flow; other fields are meaningful only
+// for specific kinds as noted below.
 type diffResult struct {
-	toUpload    map[string]bool   // paths to include in tarball
-	toDelete    []string          // paths to delete from server
-	localFiles  map[string]string // full local manifest (to send to server)
-	uploadCount int
-	uploadBytes int64
+	kind        pushKind
+	toUpload    map[string]bool   // valid only when kind == pushKindIncremental
+	toDelete    []string          // valid only when kind == pushKindIncremental
+	localFiles  map[string]string // always populated when diffResult is non-nil
+	uploadCount int               // meaningful when kind == pushKindIncremental
+	uploadBytes int64             // meaningful when kind == pushKindIncremental
 	unchanged   int
-	fullPush    bool // true when falling back to full push (first deploy or fetch error)
 }
 
 // diffDoneMsg signals that diff computation is complete.
@@ -218,7 +232,7 @@ func (m pushModel) handleDiffDone(msg diffDoneMsg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(m.startUpload(), waitForProgress(m.progressCh))
 	}
 
-	if msg.result != nil && !msg.result.fullPush && msg.result.toUpload == nil && msg.result.toDelete == nil {
+	if msg.result != nil && msg.result.kind == pushKindNone {
 		// Already up to date — nothing changed.
 		m.diffResult = msg.result
 		m.step = stepPushDone
@@ -228,7 +242,9 @@ func (m pushModel) handleDiffDone(msg diffDoneMsg) (tea.Model, tea.Cmd) {
 	m.diffResult = msg.result
 	m.step = stepPushUploading
 
-	if msg.result != nil && !msg.result.fullPush {
+	// Incremental pushes narrow the scan totals to just the upload subset.
+	// Full pushes keep the original scan totals (every local file ships).
+	if msg.result.kind == pushKindIncremental {
 		m.fileCount = msg.result.uploadCount
 		m.totalBytes = msg.result.uploadBytes
 	}
@@ -248,12 +264,12 @@ func (m pushModel) doDiff() tea.Msg {
 	serverManifest, err := fetchManifest(m.ctx, m.cfg, m.slug, m.domain)
 	if err != nil {
 		// Non-fatal: fall back to full push, but still send manifest.
-		return diffDoneMsg{result: &diffResult{localFiles: localFiles, fullPush: true}}
+		return diffDoneMsg{result: &diffResult{kind: pushKindFull, localFiles: localFiles}}
 	}
 
 	if serverManifest == nil || len(serverManifest) == 0 {
 		// First deploy — full push, but send manifest so server saves it.
-		return diffDoneMsg{result: &diffResult{localFiles: localFiles, fullPush: true}}
+		return diffDoneMsg{result: &diffResult{kind: pushKindFull, localFiles: localFiles}}
 	}
 
 	// Compute diff.
@@ -262,8 +278,7 @@ func (m pushModel) doDiff() tea.Msg {
 	if len(uploadPaths) == 0 && len(toDelete) == 0 {
 		// Already up to date.
 		return diffDoneMsg{result: &diffResult{
-			toUpload:   nil,
-			toDelete:   nil,
+			kind:       pushKindNone,
 			localFiles: localFiles,
 			unchanged:  len(localFiles),
 		}}
@@ -280,6 +295,7 @@ func (m pushModel) doDiff() tea.Msg {
 	}
 
 	return diffDoneMsg{result: &diffResult{
+		kind:        pushKindIncremental,
 		toUpload:    uploadSet,
 		toDelete:    toDelete,
 		localFiles:  localFiles,
@@ -304,13 +320,20 @@ func (m pushModel) startUpload() tea.Cmd {
 			return pushResultMsg{err: fmt.Errorf("open push stream: %w", err)}
 		}
 
-		if m.diffResult != nil && m.diffResult.toUpload != nil {
-			// Diff push — send only changed files.
+		// Choose streaming strategy based on what we computed. A nil diffResult
+		// (hashing failed upstream) degrades to a full push with no manifest,
+		// matching the silent-fallback behavior this code has always had.
+		kind := pushKindFull
+		if m.diffResult != nil {
+			kind = m.diffResult.kind
+		}
+
+		switch kind {
+		case pushKindIncremental:
 			if err := streamDiffWithProgress(".", m.slug, m.domain, m.deployConfig, stream, m.totalBytes, m.progressCh, m.diffResult); err != nil {
 				return pushResultMsg{err: err}
 			}
-		} else {
-			// Full push — send manifest so server can save it for next diff.
+		case pushKindFull:
 			var manifest map[string]string
 			if m.diffResult != nil {
 				manifest = m.diffResult.localFiles
@@ -424,8 +447,8 @@ func streamDirWithProgress(dir, slug, domain string, deployConfig map[string]int
 			return fmt.Errorf("read tarball: %w", err)
 		}
 	}
-		return nil
-	}
+	return nil
+}
 
 // streamDiffWithProgress streams a diff tarball to the server with progress reporting.
 func streamDiffWithProgress(dir, slug, domain string, deployConfig map[string]interface{}, stream pb.DeployService_PushClient, total int64, ch chan pushProgressMsg, diff *diffResult) error {

@@ -86,28 +86,30 @@ func runPush(cmd *cobra.Command, _ []string) error {
 		return fmt.Errorf("unexpected error")
 	}
 
-	// Print the completed upload summary with a static progress bar.
-	upToDate := pm.diffResult != nil && !pm.diffResult.fullPush && pm.diffResult.toUpload == nil && pm.diffResult.toDelete == nil
+	// Print the completed upload summary with a static progress bar. A nil
+	// diffResult means hashing failed and we degraded to a full push; treat
+	// that as pushKindFull for display purposes.
+	kind := pushKindFull
+	if pm.diffResult != nil {
+		kind = pm.diffResult.kind
+	}
 
-	if upToDate {
+	switch kind {
+	case pushKindNone:
 		n := pm.diffResult.unchanged
-		fileWord := "files"
-		if n == 1 {
-			fileWord = "file"
-		}
-		fmt.Println(tui.StyleSuccess.Render(fmt.Sprintf("Already up to date — %d %s unchanged.", n, fileWord)))
-	} else if pm.diffResult != nil && pm.diffResult.toUpload != nil {
+		fmt.Println(tui.StyleSuccess.Render(fmt.Sprintf("Already up to date — %d file(s) unchanged.", n)))
+	case pushKindIncremental:
 		fmt.Printf("Uploaded %s (%d changed, %d deleted, %d skipped)\n",
 			formatBytes(pm.totalBytes), pm.diffResult.uploadCount, len(pm.diffResult.toDelete), pm.diffResult.unchanged)
 		bar := progress.New(progress.WithGradient(string(tui.ColorPrimary), string(tui.ColorSuccess)), progress.WithoutPercentage())
 		fmt.Printf("%s 100%%\n", bar.ViewAs(1.0))
-	} else {
+	case pushKindFull:
 		bar := progress.New(progress.WithGradient(string(tui.ColorPrimary), string(tui.ColorSuccess)), progress.WithoutPercentage())
-		fmt.Printf("Uploading %s (%d files)\n", formatBytes(pm.totalBytes), pm.fileCount)
+		fmt.Printf("Uploaded %s (%d files)\n", formatBytes(pm.totalBytes), pm.fileCount)
 		fmt.Printf("%s 100%% — %s / %s\n", bar.ViewAs(1.0), formatBytes(pm.totalBytes), formatBytes(pm.totalBytes))
 	}
 
-	if !upToDate {
+	if kind != pushKindNone {
 		if pm.firstDeploy {
 			fmt.Printf("Live: https://%s\n", pm.url)
 			fmt.Println(tui.StyleMuted.Render("First deploy — DNS may take a moment to propagate."))
@@ -466,6 +468,7 @@ func pushNonInteractive(
 			}
 		}
 		diff = &diffResult{
+			kind:        pushKindIncremental,
 			toUpload:    uploadSet,
 			toDelete:    toDelete,
 			localFiles:  localFiles,
@@ -483,7 +486,7 @@ func pushNonInteractive(
 		if err != nil {
 			return fmt.Errorf("scan directory: %w", err)
 		}
-		diff = &diffResult{localFiles: localFiles, fullPush: true}
+		diff = &diffResult{kind: pushKindFull, localFiles: localFiles}
 		fileCount = len(localFiles)
 	}
 
@@ -504,7 +507,7 @@ func pushNonInteractive(
 		close(progressDone)
 	}()
 
-	if diff.fullPush {
+	if diff.kind == pushKindFull {
 		err = streamDirWithProgress(".", slug, domain, deployConfig, stream, totalBytes, progressCh, ignorer, diff.localFiles)
 	} else {
 		err = streamDiffWithProgress(".", slug, domain, deployConfig, stream, totalBytes, progressCh, diff)
@@ -526,7 +529,7 @@ func pushNonInteractive(
 		}
 	}
 
-	if diff.fullPush {
+	if diff.kind == pushKindFull {
 		fmt.Fprintf(out, "Uploaded %s (%d files)\n", formatBytes(totalBytes), fileCount)
 	} else {
 		fmt.Fprintf(out, "Uploaded %s (%d changed, %d deleted, %d unchanged)\n",
