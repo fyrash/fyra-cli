@@ -124,7 +124,7 @@ func runPush(cmd *cobra.Command, _ []string) error {
 }
 
 // scanDir counts files and total uncompressed bytes in dir (excluding .git, node_modules, .deploy.yaml).
-func scanDir(dir string, ign *gitignore.GitIgnore) (fileCount int, totalBytes int64, err error) {
+func scanDir(dir string, ign *gitignore.GitIgnore) (fileCount int, skippedCount int, totalBytes int64, err error) {
 	err = filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -134,6 +134,7 @@ func scanDir(dir string, ign *gitignore.GitIgnore) (fileCount int, totalBytes in
 			if d.IsDir() {
 				return filepath.SkipDir
 			}
+			skippedCount++
 			return nil
 		}
 		if d.IsDir() {
@@ -147,7 +148,8 @@ func scanDir(dir string, ign *gitignore.GitIgnore) (fileCount int, totalBytes in
 		totalBytes += info.Size()
 		return nil
 	})
-	return
+
+	return fileCount, skippedCount, totalBytes, err
 }
 
 // formatBytes returns a human-readable byte size (KB/MB/GB).
@@ -273,9 +275,14 @@ func fetchManifest(ctx context.Context, cfg clientConfig, slug, domain string) (
 	return resp.Files, nil
 }
 
-// scanDirWithHashes walks the directory and returns a map of relative path → SHA256 hash.
-// Uses the same exclusion rules as scanDir.
-func scanDirWithHashes(dir string, ign *gitignore.GitIgnore) (map[string]string, error) {
+// scanDirWithHashes walks the directory and returns a map of relative path →
+// SHA256 hash and the number of files skipped. Uses the same exclusion rules as scanDir.
+func scanDirWithHashes(dir string, ign *gitignore.GitIgnore) (map[string]string, int, error) {
+
+	var (
+		skippedCount int
+	)
+
 	files := make(map[string]string)
 	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -286,6 +293,7 @@ func scanDirWithHashes(dir string, ign *gitignore.GitIgnore) (map[string]string,
 			if d.IsDir() {
 				return filepath.SkipDir
 			}
+			skippedCount++
 			return nil
 		}
 		if d.IsDir() {
@@ -298,7 +306,7 @@ func scanDirWithHashes(dir string, ign *gitignore.GitIgnore) (map[string]string,
 		files[rel] = hash
 		return nil
 	})
-	return files, err
+	return files, skippedCount, err
 }
 
 // tarballDiffDir writes a gzipped tar of only the files in uploadSet to w.
@@ -425,6 +433,14 @@ func pushNonInteractive(
 	openStream pushStreamFn,
 	fetchManifestFn manifestFn,
 ) error {
+
+	var (
+		diff         *diffResult
+		totalBytes   int64
+		fileCount    int
+		skippedCount int
+	)
+
 	if cfg.Token == "" {
 		return fmt.Errorf("not logged in: run '%s login' first", binaryName)
 	}
@@ -432,7 +448,7 @@ func pushNonInteractive(
 	ignorer, _ := loadIgnoreFile(".")
 
 	// Local file hashes feed both the diff and the manifest we send on first chunk.
-	localFiles, err := scanDirWithHashes(".", ignorer)
+	localFiles, skippedCount, err := scanDirWithHashes(".", ignorer)
 	if err != nil {
 		return fmt.Errorf("hash files: %w", err)
 	}
@@ -440,22 +456,12 @@ func pushNonInteractive(
 	// Fetch server manifest. Errors here are non-fatal — fall back to full push.
 	serverManifest, _ := fetchManifestFn(ctx, slug, domain)
 
-	var (
-		diff       *diffResult
-		totalBytes int64
-		fileCount  int
-	)
-
 	switch {
 	case len(serverManifest) > 0:
 		uploadPaths, toDelete := computeDiff(localFiles, serverManifest)
 		if len(uploadPaths) == 0 && len(toDelete) == 0 {
 			n := len(localFiles)
-			fileWord := "files"
-			if n == 1 {
-				fileWord = "file"
-			}
-			fmt.Fprintf(out, "Already up to date — %d %s unchanged.\n", n, fileWord)
+			fmt.Fprintf(out, "Already up to date — %d file(s) unchanged.\n", n)
 			return nil
 		}
 
@@ -482,7 +488,7 @@ func pushNonInteractive(
 	default:
 		// First deploy or fetch failure: full push, still send the manifest so
 		// the server can save it for the next diff.
-		_, totalBytes, err = scanDir(".", ignorer)
+		_, skippedCount, totalBytes, err = scanDir(".", ignorer)
 		if err != nil {
 			return fmt.Errorf("scan directory: %w", err)
 		}
@@ -530,7 +536,7 @@ func pushNonInteractive(
 	}
 
 	if diff.kind == pushKindFull {
-		fmt.Fprintf(out, "Uploaded %s (%d files)\n", formatBytes(totalBytes), fileCount)
+		fmt.Fprintf(out, "Uploaded %s (%d files), %d skipped\n", formatBytes(totalBytes), fileCount, skippedCount)
 	} else {
 		fmt.Fprintf(out, "Uploaded %s (%d changed, %d deleted, %d unchanged)\n",
 			formatBytes(totalBytes), fileCount, len(diff.toDelete), diff.unchanged)

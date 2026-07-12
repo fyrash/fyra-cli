@@ -41,6 +41,7 @@ type pushModel struct {
 	spinner      spinner.Model
 	bar          progress.Model
 	fileCount    int
+	skippedCount int
 	totalBytes   int64
 	sent         int64
 	url          string
@@ -69,8 +70,9 @@ type pushResultMsg struct {
 
 // scanDoneMsg signals that directory scanning is complete.
 type scanDoneMsg struct {
-	fileCount  int
-	totalBytes int64
+	fileCount    int
+	skippedCount int
+	totalBytes   int64
 }
 
 // pushKind discriminates the three mutually exclusive outcomes of a push.
@@ -190,7 +192,7 @@ func (m pushModel) View() string {
 		if m.totalBytes > 0 {
 			pct = float64(m.sent) * 100 / float64(m.totalBytes)
 		}
-		b.WriteString(fmt.Sprintf("Uploading %s (%d files)\n", formatBytes(m.totalBytes), m.fileCount))
+		b.WriteString(fmt.Sprintf("Uploading %s (%d files) - %d files skipped\n", formatBytes(m.totalBytes), m.fileCount, m.skippedCount))
 		b.WriteString(m.bar.View())
 		b.WriteString(fmt.Sprintf(" %.0f%% — %s / %s", pct, formatBytes(m.sent), formatBytes(m.totalBytes)))
 
@@ -210,17 +212,18 @@ func (m pushModel) View() string {
 
 // doScan is a tea.Cmd that counts files in the directory.
 func (m pushModel) doScan() tea.Msg {
-	fileCount, totalBytes, err := scanDir(".", m.ignorer)
+	fileCount, skippedCount, totalBytes, err := scanDir(".", m.ignorer)
 	if err != nil {
 		return pushResultMsg{err: fmt.Errorf("scan directory: %w", err)}
 	}
-	return scanDoneMsg{fileCount: fileCount, totalBytes: totalBytes}
+	return scanDoneMsg{fileCount: fileCount, totalBytes: totalBytes, skippedCount: skippedCount}
 }
 
 // handleScanDone transitions from scanning to diffing.
 func (m pushModel) handleScanDone(msg scanDoneMsg) (tea.Model, tea.Cmd) {
 	m.fileCount = msg.fileCount
 	m.totalBytes = msg.totalBytes
+	m.skippedCount = msg.skippedCount
 	m.step = stepPushDiffing
 	return m, m.doDiff
 }
@@ -255,7 +258,7 @@ func (m pushModel) handleDiffDone(msg diffDoneMsg) (tea.Model, tea.Cmd) {
 // doDiff fetches the server manifest and computes the diff.
 func (m pushModel) doDiff() tea.Msg {
 	// Compute local file hashes.
-	localFiles, err := scanDirWithHashes(".", m.ignorer)
+	localFiles, _, err := scanDirWithHashes(".", m.ignorer)
 	if err != nil {
 		return diffDoneMsg{err: fmt.Errorf("hash files: %w", err)}
 	}
