@@ -192,7 +192,7 @@ func (m pushModel) View() string {
 		if m.totalBytes > 0 {
 			pct = float64(m.sent) * 100 / float64(m.totalBytes)
 		}
-		b.WriteString(fmt.Sprintf("Uploading %s (%d files) - %d files skipped\n", formatBytes(m.totalBytes), m.fileCount, m.skippedCount))
+		b.WriteString(fmt.Sprintf("Uploading %s (%d files) - %d files ignored\n", formatBytes(m.totalBytes), m.fileCount, m.skippedCount))
 		b.WriteString(m.bar.View())
 		b.WriteString(fmt.Sprintf(" %.0f%% — %s / %s", pct, formatBytes(m.sent), formatBytes(m.totalBytes)))
 

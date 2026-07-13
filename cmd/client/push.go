@@ -13,7 +13,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/progress"
 	gitignore "github.com/sabhiram/go-gitignore"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
@@ -86,40 +85,13 @@ func runPush(cmd *cobra.Command, _ []string) error {
 		return fmt.Errorf("unexpected error")
 	}
 
-	// Print the completed upload summary with a static progress bar. A nil
-	// diffResult means hashing failed and we degraded to a full push; treat
-	// that as pushKindFull for display purposes.
+	// Print the completed upload summary. A nil diffResult means hashing
+	// failed and we degraded to a full push; treat that as pushKindFull.
 	kind := pushKindFull
 	if pm.diffResult != nil {
 		kind = pm.diffResult.kind
 	}
-
-	switch kind {
-	case pushKindNone:
-		n := pm.diffResult.unchanged
-		fmt.Println(tui.StyleSuccess.Render(fmt.Sprintf("Already up to date — %d file(s) unchanged.", n)))
-	case pushKindIncremental:
-		fmt.Printf("Uploaded %s (%d changed, %d deleted, %d skipped)\n",
-			formatBytes(pm.totalBytes), pm.diffResult.uploadCount, len(pm.diffResult.toDelete), pm.diffResult.unchanged)
-		bar := progress.New(progress.WithGradient(string(tui.ColorPrimary), string(tui.ColorSuccess)), progress.WithoutPercentage())
-		fmt.Printf("%s 100%%\n", bar.ViewAs(1.0))
-	case pushKindFull:
-		bar := progress.New(progress.WithGradient(string(tui.ColorPrimary), string(tui.ColorSuccess)), progress.WithoutPercentage())
-		fmt.Printf("Uploaded %s (%d files)\n", formatBytes(pm.totalBytes), pm.fileCount)
-		fmt.Printf("%s 100%% — %s / %s\n", bar.ViewAs(1.0), formatBytes(pm.totalBytes), formatBytes(pm.totalBytes))
-	}
-
-	if kind != pushKindNone {
-		if pm.firstDeploy {
-			fmt.Printf("Live: https://%s\n", pm.url)
-			fmt.Println(tui.StyleMuted.Render("First deploy — DNS may take a moment to propagate."))
-		} else {
-			fmt.Printf("Done: https://%s\n", pm.url)
-		}
-	}
-	if pm.savedAppFile {
-		fmt.Printf(tui.StyleMuted.Render("Saved .deploy.yaml — run '%s push' next time.\n"), binaryName)
-	}
+	renderPushSummary(os.Stdout, kind, pm.diffResult, pm.totalBytes, pm.fileCount, pm.skippedCount, pm.url, pm.firstDeploy, pm.savedAppFile)
 	return nil
 }
 
@@ -163,6 +135,45 @@ func formatBytes(b int64) string {
 		return fmt.Sprintf("%.1f KB", float64(b)/(1<<10))
 	default:
 		return fmt.Sprintf("%d B", b)
+	}
+}
+
+// renderPushSummary prints the post-push summary to out. Called by both the
+// interactive path (after the TUI exits) and the non-interactive path (after
+// the stream completes). kind picks the summary line; diff carries the
+// per-kind counts. diff may be nil only when kind == pushKindFull (hashing
+// failed upstream and we degraded to a full push).
+func renderPushSummary(out io.Writer, kind pushKind, diff *diffResult, totalBytes int64, fileCount, skippedCount int, url string, firstDeploy, savedAppFile bool) {
+	switch kind {
+	case pushKindNone:
+		n := 0
+		if diff != nil {
+			n = diff.unchanged
+		}
+		fmt.Fprintln(out, tui.StyleSuccess.Render(fmt.Sprintf("Already up to date — %d file(s) unchanged.", n)))
+	case pushKindIncremental:
+		fmt.Fprintf(out, "Uploaded %s (%d changed, %d deleted, %d unchanged)\n",
+			formatBytes(totalBytes), fileCount, len(diff.toDelete), diff.unchanged)
+	case pushKindFull:
+		if skippedCount > 0 {
+			fmt.Fprintf(out, "Uploaded %s (%d files), %d ignored\n", formatBytes(totalBytes), fileCount, skippedCount)
+		} else {
+			fmt.Fprintf(out, "Uploaded %s (%d files)\n", formatBytes(totalBytes), fileCount)
+		}
+	}
+
+	if kind == pushKindNone {
+		return
+	}
+
+	if firstDeploy {
+		fmt.Fprintf(out, "Live: https://%s\n", url)
+		fmt.Fprintln(out, tui.StyleMuted.Render("First deploy — DNS may take a moment to propagate."))
+	} else {
+		fmt.Fprintf(out, "Done: https://%s\n", url)
+	}
+	if savedAppFile {
+		fmt.Fprintf(out, tui.StyleMuted.Render("Saved .deploy.yaml — run '%s push' next time.\n"), binaryName)
 	}
 }
 
@@ -460,8 +471,11 @@ func pushNonInteractive(
 	case len(serverManifest) > 0:
 		uploadPaths, toDelete := computeDiff(localFiles, serverManifest)
 		if len(uploadPaths) == 0 && len(toDelete) == 0 {
-			n := len(localFiles)
-			fmt.Fprintf(out, "Already up to date — %d file(s) unchanged.\n", n)
+			renderPushSummary(out, pushKindNone, &diffResult{
+				kind:       pushKindNone,
+				localFiles: localFiles,
+				unchanged:  len(localFiles),
+			}, 0, 0, 0, "", false, false)
 			return nil
 		}
 
@@ -529,23 +543,14 @@ func pushNonInteractive(
 		return friendlyPushError(err)
 	}
 
+	savedAppFile := false
 	if saveAppFile {
 		if err := writeAppFile(appFile{Slug: slug, Server: cfg.ServerAddress}); err != nil {
 			return fmt.Errorf("save .deploy.yaml: %w", err)
 		}
+		savedAppFile = true
 	}
 
-	if diff.kind == pushKindFull {
-		fmt.Fprintf(out, "Uploaded %s (%d files), %d skipped\n", formatBytes(totalBytes), fileCount, skippedCount)
-	} else {
-		fmt.Fprintf(out, "Uploaded %s (%d changed, %d deleted, %d unchanged)\n",
-			formatBytes(totalBytes), fileCount, len(diff.toDelete), diff.unchanged)
-	}
-	if resp.FirstDeploy {
-		fmt.Fprintf(out, "Live: https://%s\n", resp.Url)
-		fmt.Fprintln(out, "First deploy — DNS may take a moment to propagate.")
-	} else {
-		fmt.Fprintf(out, "Done: https://%s\n", resp.Url)
-	}
+	renderPushSummary(out, diff.kind, diff, totalBytes, fileCount, skippedCount, resp.Url, resp.FirstDeploy, savedAppFile)
 	return nil
 }
