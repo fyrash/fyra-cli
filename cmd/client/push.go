@@ -11,6 +11,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	gitignore "github.com/sabhiram/go-gitignore"
@@ -26,6 +27,7 @@ import (
 
 var pushAppName string
 var pushNonInteractiveFlag bool
+var pushVerboseFlag bool
 
 var pushCmd = &cobra.Command{
 	Use:   "push",
@@ -36,6 +38,7 @@ var pushCmd = &cobra.Command{
 func init() {
 	pushCmd.Flags().StringVar(&pushAppName, "appname", "", "app slug to push to (overrides .deploy.yaml)")
 	pushCmd.Flags().BoolVar(&pushNonInteractiveFlag, "non-interactive", false, "skip the live progress TUI (auto-enabled when stdout is not a TTY)")
+	pushCmd.Flags().BoolVarP(&pushVerboseFlag, "verbose", "v", false, "list uploaded, deleted, and ignored files after the push")
 }
 
 func runPush(cmd *cobra.Command, _ []string) error {
@@ -92,11 +95,14 @@ func runPush(cmd *cobra.Command, _ []string) error {
 		kind = pm.diffResult.kind
 	}
 	renderPushSummary(os.Stdout, kind, pm.diffResult, pm.totalBytes, pm.fileCount, pm.skippedCount, pm.url, pm.firstDeploy, pm.savedAppFile)
+	if pushVerboseFlag {
+		renderVerboseListing(os.Stdout, pm.diffResult, pm.ignored)
+	}
 	return nil
 }
 
 // scanDir counts files and total uncompressed bytes in dir (excluding .git, node_modules, .deploy.yaml).
-func scanDir(dir string, ign *gitignore.GitIgnore) (fileCount int, skippedCount int, totalBytes int64, err error) {
+func scanDir(dir string, ign *gitignore.GitIgnore) (fileCount int, skippedCount int, totalBytes int64, ignored []string, err error) {
 	err = filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -107,6 +113,7 @@ func scanDir(dir string, ign *gitignore.GitIgnore) (fileCount int, skippedCount 
 				return filepath.SkipDir
 			}
 			skippedCount++
+			ignored = append(ignored, rel)
 			return nil
 		}
 		if d.IsDir() {
@@ -121,7 +128,7 @@ func scanDir(dir string, ign *gitignore.GitIgnore) (fileCount int, skippedCount 
 		return nil
 	})
 
-	return fileCount, skippedCount, totalBytes, err
+	return fileCount, skippedCount, totalBytes, ignored, err
 }
 
 // formatBytes returns a human-readable byte size (KB/MB/GB).
@@ -155,12 +162,10 @@ func renderPushSummary(out io.Writer, kind pushKind, diff *diffResult, totalByte
 		fmt.Fprintf(out, "Uploaded %s (%d changed, %d deleted, %d unchanged)\n",
 			formatBytes(totalBytes), fileCount, len(diff.toDelete), diff.unchanged)
 	case pushKindFull:
-		if skippedCount > 0 {
-			fmt.Fprintf(out, "Uploaded %s (%d files), %d ignored\n", formatBytes(totalBytes), fileCount, skippedCount)
-		} else {
-			fmt.Fprintf(out, "Uploaded %s (%d files)\n", formatBytes(totalBytes), fileCount)
-		}
+		fmt.Fprintf(out, "Uploaded %s (%d files)\n", formatBytes(totalBytes), fileCount)
 	}
+
+	fmt.Fprintf(out, "%d file(s) ignored\n", skippedCount)
 
 	if kind == pushKindNone {
 		return
@@ -174,6 +179,68 @@ func renderPushSummary(out io.Writer, kind pushKind, diff *diffResult, totalByte
 	}
 	if savedAppFile {
 		fmt.Fprintf(out, tui.StyleMuted.Render("Saved .deploy.yaml — run '%s push' next time.\n"), binaryName)
+	}
+}
+
+// renderVerboseListing prints categorized lists of uploaded, deleted, and
+// ignored files. Called only when --verbose is set. Empty sections are
+// omitted. All lists are sorted alphabetically for deterministic output.
+func renderVerboseListing(out io.Writer, diff *diffResult, ignored []string) {
+	var uploaded []string
+	if diff != nil {
+		switch diff.kind {
+		case pushKindIncremental:
+			uploaded = make([]string, 0, len(diff.toUpload))
+			for p := range diff.toUpload {
+				uploaded = append(uploaded, p)
+			}
+		case pushKindFull:
+			uploaded = make([]string, 0, len(diff.localFiles))
+			for p := range diff.localFiles {
+				uploaded = append(uploaded, p)
+			}
+		}
+	}
+
+	var deleted []string
+	if diff != nil {
+		deleted = append(deleted, diff.toDelete...)
+	}
+
+	hasSection := false
+	if len(uploaded) > 0 {
+		slices.Sort(uploaded)
+		if !hasSection {
+			fmt.Fprintln(out)
+			hasSection = true
+		}
+		fmt.Fprintln(out, tui.StyleMuted.Render("Uploaded:"))
+		for _, p := range uploaded {
+			fmt.Fprintf(out, "  %s\n", p)
+		}
+	}
+	if len(deleted) > 0 {
+		slices.Sort(deleted)
+		if !hasSection {
+			fmt.Fprintln(out)
+			hasSection = true
+		}
+		fmt.Fprintln(out, tui.StyleMuted.Render("Deleted:"))
+		for _, p := range deleted {
+			fmt.Fprintf(out, "  %s\n", p)
+		}
+	}
+	if len(ignored) > 0 {
+		sortedIgnored := append([]string(nil), ignored...)
+		slices.Sort(sortedIgnored)
+		if !hasSection {
+			fmt.Fprintln(out)
+			hasSection = true
+		}
+		fmt.Fprintln(out, tui.StyleMuted.Render("Ignored:"))
+		for _, p := range sortedIgnored {
+			fmt.Fprintf(out, "  %s\n", p)
+		}
 	}
 }
 
@@ -288,14 +355,10 @@ func fetchManifest(ctx context.Context, cfg clientConfig, slug, domain string) (
 
 // scanDirWithHashes walks the directory and returns a map of relative path →
 // SHA256 hash and the number of files skipped. Uses the same exclusion rules as scanDir.
-func scanDirWithHashes(dir string, ign *gitignore.GitIgnore) (map[string]string, int, error) {
+func scanDirWithHashes(dir string, ign *gitignore.GitIgnore) (files map[string]string, skippedCount int, ignored []string, err error) {
 
-	var (
-		skippedCount int
-	)
-
-	files := make(map[string]string)
-	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+	files = make(map[string]string)
+	err = filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -305,6 +368,7 @@ func scanDirWithHashes(dir string, ign *gitignore.GitIgnore) (map[string]string,
 				return filepath.SkipDir
 			}
 			skippedCount++
+			ignored = append(ignored, rel)
 			return nil
 		}
 		if d.IsDir() {
@@ -317,7 +381,7 @@ func scanDirWithHashes(dir string, ign *gitignore.GitIgnore) (map[string]string,
 		files[rel] = hash
 		return nil
 	})
-	return files, skippedCount, err
+	return files, skippedCount, ignored, err
 }
 
 // tarballDiffDir writes a gzipped tar of only the files in uploadSet to w.
@@ -450,6 +514,7 @@ func pushNonInteractive(
 		totalBytes   int64
 		fileCount    int
 		skippedCount int
+		ignored      []string
 	)
 
 	if cfg.Token == "" {
@@ -459,7 +524,7 @@ func pushNonInteractive(
 	ignorer, _ := loadIgnoreFile(".")
 
 	// Local file hashes feed both the diff and the manifest we send on first chunk.
-	localFiles, skippedCount, err := scanDirWithHashes(".", ignorer)
+	localFiles, skippedCount, ignored, err := scanDirWithHashes(".", ignorer)
 	if err != nil {
 		return fmt.Errorf("hash files: %w", err)
 	}
@@ -471,11 +536,15 @@ func pushNonInteractive(
 	case len(serverManifest) > 0:
 		uploadPaths, toDelete := computeDiff(localFiles, serverManifest)
 		if len(uploadPaths) == 0 && len(toDelete) == 0 {
-			renderPushSummary(out, pushKindNone, &diffResult{
+			diff = &diffResult{
 				kind:       pushKindNone,
 				localFiles: localFiles,
 				unchanged:  len(localFiles),
-			}, 0, 0, 0, "", false, false)
+			}
+			renderPushSummary(out, pushKindNone, diff, 0, 0, skippedCount, "", false, false)
+			if pushVerboseFlag {
+				renderVerboseListing(out, diff, ignored)
+			}
 			return nil
 		}
 
@@ -502,7 +571,7 @@ func pushNonInteractive(
 	default:
 		// First deploy or fetch failure: full push, still send the manifest so
 		// the server can save it for the next diff.
-		_, skippedCount, totalBytes, err = scanDir(".", ignorer)
+		_, skippedCount, totalBytes, ignored, err = scanDir(".", ignorer)
 		if err != nil {
 			return fmt.Errorf("scan directory: %w", err)
 		}
@@ -552,5 +621,8 @@ func pushNonInteractive(
 	}
 
 	renderPushSummary(out, diff.kind, diff, totalBytes, fileCount, skippedCount, resp.Url, resp.FirstDeploy, savedAppFile)
+	if pushVerboseFlag {
+		renderVerboseListing(out, diff, ignored)
+	}
 	return nil
 }

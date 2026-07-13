@@ -149,3 +149,55 @@ func TestPushNonInteractive_FriendlyUnauthenticated(t *testing.T) {
 		t.Errorf("expected no stdout on error; got %q", out.String())
 	}
 }
+
+func TestPushNonInteractive_VerboseListsIgnored(t *testing.T) {
+	// Not parallel: chdirTemp and the pushVerboseFlag global mutate process state.
+	chdirTemp(t)
+
+	if err := os.WriteFile("index.html", []byte("<h1>hello</h1>"), 0644); err != nil {
+		t.Fatalf("seed fixture: %v", err)
+	}
+	if err := os.WriteFile(".env", []byte("SECRET=1"), 0644); err != nil {
+		t.Fatalf("seed .env: %v", err)
+	}
+	if err := os.WriteFile(".fyraignore", []byte("*.log"), 0644); err != nil {
+		t.Fatalf("seed .fyraignore: %v", err)
+	}
+	if err := os.WriteFile("debug.log", []byte("logs"), 0644); err != nil {
+		t.Fatalf("seed debug.log: %v", err)
+	}
+
+	stream := &fakePushStream{
+		resp: &pb.PushResponse{Url: "myapp.apps.fyra.sh", FirstDeploy: true},
+	}
+	openStream := func(ctx context.Context) (pb.DeployService_PushClient, error) {
+		return stream, nil
+	}
+	manifestFetch := func(ctx context.Context, slug, domain string) (map[string]string, error) {
+		return nil, nil // first deploy
+	}
+	cfg := clientConfig{Token: "tok"}
+
+	pushVerboseFlag = true
+	defer func() { pushVerboseFlag = false }()
+
+	var out bytes.Buffer
+	err := pushNonInteractive(
+		context.Background(), cfg, "myapp", "apps.fyra.sh",
+		false, nil, &out, openStream, manifestFetch,
+	)
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+
+	outStr := out.String()
+	if !strings.Contains(outStr, "Ignored:") {
+		t.Errorf("expected 'Ignored:' header; got %q", outStr)
+	}
+	if !strings.Contains(outStr, "  .env\n") {
+		t.Errorf("expected .env in ignored listing; got %q", outStr)
+	}
+	if !strings.Contains(outStr, "  debug.log\n") {
+		t.Errorf("expected debug.log in ignored listing; got %q", outStr)
+	}
+}
