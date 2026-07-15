@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"sort"
 	"strings"
 
 	gitignore "github.com/sabhiram/go-gitignore"
@@ -67,6 +68,15 @@ func runPush(cmd *cobra.Command, _ []string) error {
 	if cfg.Token == "" {
 		return fmt.Errorf("not logged in: run '%s login' first", binaryName)
 	}
+
+	// Surface any secret files the push withholds by default, so the user knows
+	// sensitive files that were not gitignored are still being kept out of the
+	// deploy. Written to stderr (not stdout) so the notice stays out of any
+	// piped `fyra push` output a CI/CD job might consume, and printed before the
+	// TUI starts so it stays visible on both the interactive and non-interactive
+	// paths.
+	ignorer, _ := loadIgnoreFile(".")
+	warnSkippedSecrets(os.Stderr, skippedSecretFiles(".", ignorer))
 
 	// Non-interactive path: explicit flag OR auto-detected when stdout is not
 	// a TTY (e.g. CI, piped to a file, or any wrapping that strips the TTY).
@@ -274,9 +284,17 @@ func loadIgnoreFile(dir string) (*gitignore.GitIgnore, error) {
 	return gitignore.CompileIgnoreFile(path)
 }
 
+// pruneDir reports whether a directory should be pruned from the walk entirely
+// (never descended into). Centralizing the list here keeps shouldSkip and
+// skippedSecretFiles from drifting: a directory added here is skipped by the
+// tarball AND excluded from the secret-file warning in lockstep.
+func pruneDir(name string) bool {
+	return name == ".git" || name == "node_modules"
+}
+
 // shouldSkip returns true if the file or directory should be excluded from the tarball.
 func shouldSkip(name, relPath string, isDir bool, ign *gitignore.GitIgnore) bool {
-	if isDir && (name == ".git" || name == "node_modules") {
+	if isDir && pruneDir(name) {
 		return true
 	}
 	if name == ".deploy.yaml" {
@@ -285,18 +303,77 @@ func shouldSkip(name, relPath string, isDir bool, ign *gitignore.GitIgnore) bool
 	// Hardcoded secret exclusions — these must never ship even if the
 	// user forgot to list them in .fyraignore. Matched on base name so
 	// rules apply at any depth (e.g. apps/api/.env.production).
-	if strings.HasPrefix(name, ".env") ||
-		strings.HasSuffix(name, ".pem") ||
-		strings.HasSuffix(name, ".key") ||
-		strings.HasSuffix(name, ".p12") ||
-		strings.HasSuffix(name, ".pfx") ||
-		name == ".netrc" {
+	if isSecretFile(name) {
 		return true
 	}
 	if ign != nil && ign.MatchesPath(relPath) {
 		return true
 	}
 	return false
+}
+
+// isSecretFile reports whether name matches a hardcoded secret-file pattern
+// that must never be uploaded. Matched on base name, so it applies at any
+// depth (e.g. apps/api/.env.production). Used by both shouldSkip (to exclude
+// the file) and skippedSecretFiles (to report it).
+func isSecretFile(name string) bool {
+	return strings.HasPrefix(name, ".env") ||
+		strings.HasSuffix(name, ".pem") ||
+		strings.HasSuffix(name, ".key") ||
+		strings.HasSuffix(name, ".p12") ||
+		strings.HasSuffix(name, ".pfx") ||
+		name == ".netrc"
+}
+
+// skippedSecretFiles walks dir and returns the relative paths of files that the
+// hardcoded secret rule withholds from the push AND that the user has not
+// already excluded via .fyraignore. A secret the user already ignores is
+// intentional and needs no warning; this surfaces only the ones that would
+// otherwise have shipped. Directories pruned from the push (.git, node_modules)
+// are not descended into.
+func skippedSecretFiles(dir string, ign *gitignore.GitIgnore) []string {
+	var found []string
+	_ = filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return nil // best-effort: never block a push on a walk error
+		}
+		if d.IsDir() {
+			if pruneDir(d.Name()) {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !isSecretFile(d.Name()) {
+			return nil
+		}
+		rel, relErr := filepath.Rel(dir, path)
+		if relErr != nil {
+			rel = path
+		}
+		if ign != nil && ign.MatchesPath(rel) {
+			return nil
+		}
+		found = append(found, rel)
+		return nil
+	})
+	sort.Strings(found)
+	return found
+}
+
+// warnSkippedSecrets prints a one-time notice listing secret files withheld
+// from the push. It is a no-op when files is empty.
+func warnSkippedSecrets(out io.Writer, files []string) {
+	if len(files) == 0 {
+		return
+	}
+	noun := "file"
+	if len(files) > 1 {
+		noun = "files"
+	}
+	fmt.Fprintf(out, "Skipped %d secret %s (excluded by default, not uploaded):\n", len(files), noun)
+	for _, f := range files {
+		fmt.Fprintf(out, "  %s\n", f)
+	}
 }
 
 // sha256File returns the SHA256 hex of a file's contents.
